@@ -7,6 +7,8 @@ import cors from "cors"
 // ---- importantes ------
 
 import { corsOrigins } from "./config/cors.js"
+import errorMiddleware from "./middlewares/error.js"
+import morganMiddleware from "./middlewares/morgan.js"
 
 // ---- rotas -----------
 
@@ -18,9 +20,11 @@ const app = express()
 
 app.use(express.json())
    .use(cors(corsOrigins))
+   .use(morganMiddleware)
   
    .use("/api/v1/teste", testeRoute)
 
+   .use(errorMiddleware)
    
 //teste pra ver se o server ta vivo
 app.get('/', (req: Request, res: Response) => {

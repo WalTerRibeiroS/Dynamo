@@ -1,10 +1,12 @@
 import { useState} from "react"
 import { ENV } from "./config/env.ts"
+import type { ApiResponse } from "./types/apiResponse.ts"
 
 function Teste() {
 
   const [mensagem, setMensagem] = useState("Bom dia")
   const [inputValor, setInputValor] = useState("")
+  const [erroMensagem, setErroMensagem] = useState("")
 
   async function chamarBackend(){
     try {
@@ -16,12 +18,18 @@ function Teste() {
         body: JSON.stringify({ texto: inputValor }),
       })
 
-      const dados = await response.json()
-      setMensagem(dados.resposta)
+      const dados: ApiResponse<{ resposta: string }> = await response.json()
+
+      if(dados.success === false){
+        setErroMensagem(`${dados.message}.`)// ${dados.issues.field}
+        return;
+      }
+
+      setMensagem(dados.data.resposta)
 
     } catch (erro) {
       console.error("Erro ao comunicar com o backend:", erro)
-      setMensagem("Erro de comunicação")
+      setMensagem("Erro de comunicação. Tente novamente mais tarde")
     }
   }
 
@@ -41,10 +49,10 @@ function Teste() {
       
         <button 
           className="border-2 m-5 p-5 rounded-2xl bg-green-300 font-bold hover:bg-green-400 active:bg-green-200 cursor-pointer" 
-          onClick={chamarBackend}
-        >
+          onClick={chamarBackend}>
           Enviar
         </button>
+        <span>{erroMensagem}</span>
       </div>
     </>
   )
