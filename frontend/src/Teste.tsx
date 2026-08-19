@@ -15,14 +15,21 @@ function Teste() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ texto: inputValor }),
+        body: JSON.stringify({ mensagem: inputValor }),
       })
 
-      const dados: ApiResponse<{ resposta: string }> = await response.json()
+      const dados: ApiResponse<{ resposta: string }> = await response.json()// n recebe mais q uma
 
       if(dados.success === false){
-        setErroMensagem(`${dados.message}.`)// ${dados.issues.field}
-        return;
+        const issue = dados.issues?.[0] //n funciona mais q uma
+
+        if(issue){
+          setErroMensagem(`${dados.message}. No campo ${issue.field} ${issue.message}`);
+        } else {
+          setErroMensagem(dados.message)
+        }
+
+        return
       }
 
       setMensagem(dados.data.resposta)

@@ -1,3 +1,9 @@
+export type Issue = {
+  field?: string;
+  message: string;
+  code?: string;
+};
+
 export type ApiSuccess<T> = {
   success: true;
   status: "success";
@@ -10,8 +16,8 @@ export type ApiError = {
   status: "fail" | "error";
   code?: string;
   message: string;
-  issues?: unknown;// adicionar tipo 
-  publicDetails?: unknown;// adicionar tipo 
+  issues?: Issue[] ;
+  publicDetails?: Record<string, unknown>;
   stack?: string;
 }
 

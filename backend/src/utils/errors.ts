@@ -1,8 +1,5 @@
-type Issue = {
-  field?: string;
-  message: string;
-  code?: string;
-};
+import type { Issue } from "../types/issue.js"
+import type { ValidationErrorOptions } from "../types/validationErrorOptions.js"
 
 export class AppError<C extends string = string> extends Error {
   public readonly statusCode: number;
@@ -50,13 +47,6 @@ export class NotFoundError extends AppError<"NOT_FOUND"> {
     });
   }
 }
-
-type ValidationErrorOptions = {
-  issues?: Issue[];
-  details?: unknown;
-  publicDetails?: Record<string, unknown>;
-  message?: string;
-};
 
 export class ValidationError extends AppError<"VALIDATION_ERROR"> {
   constructor(

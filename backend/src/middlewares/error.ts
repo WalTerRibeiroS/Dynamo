@@ -4,7 +4,7 @@ import logger from "../utils/logger.js";
 /* import { ZodError } from "zod"; */
 import { AppError } from "../utils/errors.js";
 
-const errorMiddleware: ErrorRequestHandler = (err, req, res, next) => {
+const errorMiddleware: ErrorRequestHandler = (err, req, res, _) => {
   const isDev = ENV.NODE_ENV === "development";
   
   const logContext = {
@@ -27,9 +27,9 @@ const errorMiddleware: ErrorRequestHandler = (err, req, res, next) => {
       status: err.status,
       code: err.code,
       message: err.message,
-      ...(err.issues ? { issues: err.issues } : {}),
-      ...(err.publicDetails ? { publicDetails: err.publicDetails } : {}),
-      ...(isDev ? { stack: err.stack } : {}),
+      ...(err.issues && { issues: err.issues }),
+      ...(err.publicDetails && { publicDetails: err.publicDetails }),
+      ...(isDev && { stack: err.stack }),
     });
   }
 
@@ -37,7 +37,7 @@ const errorMiddleware: ErrorRequestHandler = (err, req, res, next) => {
     success: false,
     status: "error",
     message: isDev ? err.message : "Erro interno do servidor",
-    ...(isDev ? { stack: err.stack } : {}),
+    ...(isDev && { stack: err.stack }),
   });
 };
 

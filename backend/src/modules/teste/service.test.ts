@@ -4,13 +4,13 @@ import { dbTeste } from "./model.test.js"
 
 export const serviceTest = async(texto: string) => {
 
-  logger.info("Request recebida no controller")
+  logger.info("Request recebida no service")
 
   if (texto.length < 3) {
     throw new ValidationError({
       issues: [
         {
-          field: "campo mensagem",
+          field: "mensagem",
           message: "deve ser maior ou igual a 3 caracteres",
         },
       ],
@@ -19,7 +19,8 @@ export const serviceTest = async(texto: string) => {
     });
   }
 
-  const { mensagem } = await dbTeste(texto)
+  const {mensagem}  = await dbTeste(texto)
+  logger.info("Mensagem retornada pelo db:", mensagem)
   
   return mensagem
 }

@@ -1,5 +1,7 @@
+import type { Issue } from "./issue.js"
+
 export type ApiSuccess<T> = {
-  success: true;
+  success: true;  
   status: "success";
   data: T;
   message?: string;
@@ -10,8 +12,8 @@ export type ApiError = {
   status: "fail" | "error";
   code?: string;
   message: string;
-  issues?: unknown;
-  publicDetails?: unknown;
+  issues?: Issue[];
+  publicDetails?: Record<string, unknown>;
   stack?: string;
 }
 
