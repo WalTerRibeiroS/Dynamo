@@ -18,17 +18,19 @@ function Teste() {
         body: JSON.stringify({ mensagem: inputValor }),
       })
 
-      const dados: ApiResponse<{ resposta: string }> = await response.json()// n recebe mais q uma
-
+      const dados: ApiResponse<{ resposta: string }> = await response.json()
+      
       if(dados.success === false){
-        const issue = dados.issues?.[0] //n funciona mais q uma
+        let mensagemErroFinal = dados.message
 
-        if(issue){
-          setErroMensagem(`${dados.message}. No campo ${issue.field} ${issue.message}`);
-        } else {
-          setErroMensagem(dados.message)
+        if(dados.issues && dados.issues.length > 0){
+          const detalhesIssues = dados.issues
+            .map(issue => `${issue.field || 'Campo'}: ${issue.message}`)
+            .join(', ')
+
+            mensagemErroFinal += `.Detalhes: ${detalhesIssues}`
         }
-
+        setErroMensagem(mensagemErroFinal);
         return
       }
 

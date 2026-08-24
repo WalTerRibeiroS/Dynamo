@@ -1,16 +1,8 @@
-import { createLogger, addColors, transports, format } from "winston"
-import DailyRotateFile from "winston-daily-rotate-file"
-import { ENV } from "../config/env.js"
+import { createLogger, addColors, transports, format } from 'winston'
+import DailyRotateFile from 'winston-daily-rotate-file'
+import { ENV } from '../config/env.js'
 
-const { 
-  combine, 
-  timestamp, 
-  printf, 
-  colorize, 
-  json, 
-  errors,
-  prettyPrint 
-} = format;
+const { combine, timestamp, printf, colorize, json, errors, prettyPrint } = format
 
 const config = {
   levels: {
@@ -20,7 +12,7 @@ const config = {
     http: 3,
     verbose: 4,
     debug: 5,
-    silly: 6
+    silly: 6,
   },
   colors: {
     error: 'red',
@@ -30,52 +22,44 @@ const config = {
     verbose: 'cyan',
     debug: 'blue',
     silly: 'magenta',
-  }
+  },
 }
 
 addColors(config.colors)
 
-const isProduction = ENV.NODE_ENV === "production"
+const isProduction = ENV.NODE_ENV === 'production'
 
 const logger = createLogger({
   levels: config.levels,
   level: isProduction ? 'http' : 'debug',
-  format: combine(
-    errors({ stack: true }),
-    timestamp({ format: "DD-MM-YYYY | HH:mm:ss" }),
-  ),
+  format: combine(errors({ stack: true }), timestamp({ format: 'DD-MM-YYYY | HH:mm:ss' })),
   transports: [
     new transports.Console({
       format: isProduction
         ? json()
         : combine(
             colorize(),
-            printf(({ timestamp, level, message, ...meta }) =>
-              `[${timestamp} - ${level}] : ${message} ${
-                Object.keys(meta).length 
-                ? JSON.stringify(meta) 
-                : ""
-              }`
-            )
-          )
-    })
-  ]
+            printf(
+              ({ timestamp, level, message, ...meta }) =>
+                `[${timestamp} - ${level}] : ${message} ${
+                  Object.keys(meta).length ? JSON.stringify(meta) : ''
+                }`,
+            ),
+          ),
+    }),
+  ],
 })
 
 const fileRotateTransport = new DailyRotateFile({
-  level: "error",
-  filename: "logs/aplicacao-%DATE%.log",
-  datePattern: "DD-MM-YYYY",
+  level: 'error',
+  filename: 'logs/aplicacao-%DATE%.log',
+  datePattern: 'DD-MM-YYYY',
   zippedArchive: true,
-  maxSize: "5m",
-  maxFiles: "3d",
-  format:combine(
-    errors({ stack: true}),
-    timestamp(),
-    prettyPrint(),
-  )
-});
+  maxSize: '5m',
+  maxFiles: '3d',
+  format: combine(errors({ stack: true }), timestamp(), prettyPrint()),
+})
 
-logger.add(fileRotateTransport);
+logger.add(fileRotateTransport)
 
 export default logger

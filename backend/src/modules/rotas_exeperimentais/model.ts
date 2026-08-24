@@ -1,4 +1,4 @@
-import pool from "../../config/db.js"
+import pool from '../../config/db.js'
 
 export const dbTeste = async (mensagem: string) => {
   const result = await pool.query(
@@ -6,7 +6,7 @@ export const dbTeste = async (mensagem: string) => {
       VALUES ($1)
       RETURNING *`,
 
-    [mensagem]
+    [mensagem],
   )
   return result.rows[0]
 }
