@@ -15,13 +15,6 @@ export const serviceTest = async (texto: string) => {
     })
   }
 
-  if (texto) {
-    issues.push({
-      field: 'mensagem',
-      message: 'Lancei erro pq sim',
-    })
-  }
-
   if (issues.length > 0) {
     throw new ValidationError({ issues })
   }

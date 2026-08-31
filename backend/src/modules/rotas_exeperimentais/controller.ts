@@ -6,7 +6,6 @@ import { sendSuccess } from '../../utils/sendSuccess.js'
 import type { Texto } from '../rotas_exeperimentais/schemas/teste.js'
 
 export const teste = asyncHandler(async (req: Request, res: Response) => {
-  logger.info('Req.body:', req.body)
   logger.info('Request recebida no controller')
 
   const { mensagem: texto } = req.body as Texto
