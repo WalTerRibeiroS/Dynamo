@@ -3,6 +3,8 @@
 import express from 'express'
 import type { Request, Response } from 'express'
 import cors from 'cors'
+import helmet from "helmet"
+import cookieParser from "cookie-parser"
 
 // ---- importantes ------
 
@@ -12,7 +14,7 @@ import morganMiddleware from './middlewares/morgan.js'
 
 // ---- rotas -----------
 
-import testeRoute from './modules/rotas_exeperimentais/route.js'
+import v1Router from "./routes/v1/index.js"
 
 // ---- código ---------
 
@@ -21,9 +23,11 @@ const app = express()
 app
   .use(express.json())
   .use(cors(corsOrigins))
+  .use(helmet())
+  .use(cookieParser())
   .use(morganMiddleware)
 
-  .use('/api/v1/teste', testeRoute)
+  .use("/api/v1", v1Router)
 
   .use(errorMiddleware)
 

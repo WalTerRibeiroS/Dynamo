@@ -1,16 +1,27 @@
-import dotenv from 'dotenv'
+import "dotenv/config"
 
-dotenv.config()
+import { z } from "zod"
 
-export const ENV = {
-  PORT: process.env.PORT,
-  NODE_ENV: process.env.NODE_ENV,
-  FRONTEND_URL: process.env.FRONTEND_URL,
-  BACKEND_URL: process.env.BACKEND_URL,
+const envSchema = z.object({
+  PORT: z.coerce.number().int().positive(),
+  NODE_ENV: z
+    .union([
+      z.literal('development'),
+      z.literal('testing'),
+      z.literal('production'),
+    ]),
 
-  DB_USER: process.env.DB_USER,
-  DB_HOST: process.env.DB_HOST,
-  DB_NAME: process.env.DB_NAME,
-  DB_PASSWORD: process.env.DB_PASSWORD,
-  DB_PORT: Number(process.env.DB_PORT),
-}
+  FRONTEND_URL: z.url(),
+  BACKEND_URL: z.url(),
+
+  DB_USER: z.string().min(1),
+  DB_HOST: z.string().min(1),
+  DB_NAME: z.string().min(1),
+  DB_PASSWORD: z.string().min(1),
+  DB_PORT: z.coerce.number().int().positive(),
+
+  REFRESH_TOKEN: z.string().min(1),
+  ACCESS_TOKEN: z.string().min(1),
+})
+
+export const ENV = envSchema.parse(process.env)

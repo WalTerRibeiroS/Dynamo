@@ -12,6 +12,8 @@ export type DomainCode =
   | 'UNRECOGNIZED_KEYS'
   | 'RATE_LIMITED'
 
+  | "EMAIL_ALREADY_EXISTS"
+
 export type Issue = {
   field?: string
   message: string
