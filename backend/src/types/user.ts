@@ -1,5 +1,12 @@
-export type User = {
+export type CreatedUser = {
+  id: string;
   username: string;
-  password: string;
-  email: string;
+};
+
+export type CreateUserInput = {
+  id: string, 
+  username: string, 
+  email: string,
+  passwordHash: string,
+  refreshTokenHash: string
 }

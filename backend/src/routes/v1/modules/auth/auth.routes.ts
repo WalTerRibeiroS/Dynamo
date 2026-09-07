@@ -1,7 +1,7 @@
 import { Router } from "express"
 
 import { validateBody } from "../../../../middlewares/validateBody.js"
-import { registerUserSchema } from '../auth/schemas/register.user.schema.js'
+import { registerUserSchema } from './schemas/auth.register.schema.js'
 
 import * as controller from "./auth.controller.js"
 

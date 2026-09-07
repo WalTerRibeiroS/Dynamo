@@ -4,12 +4,7 @@ import { z } from "zod"
 
 const envSchema = z.object({
   PORT: z.coerce.number().int().positive(),
-  NODE_ENV: z
-    .union([
-      z.literal('development'),
-      z.literal('testing'),
-      z.literal('production'),
-    ]),
+  NODE_ENV: z.enum(["development", "test", "production"]),
 
   FRONTEND_URL: z.url(),
   BACKEND_URL: z.url(),

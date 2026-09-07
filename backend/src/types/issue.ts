@@ -13,6 +13,7 @@ export type DomainCode =
   | 'RATE_LIMITED'
 
   | "EMAIL_ALREADY_EXISTS"
+  | "USERNAME_ALREADY_EXISTS"
 
 export type Issue = {
   field?: string

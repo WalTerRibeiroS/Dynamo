@@ -4,7 +4,7 @@ import { sendSuccess } from "../../../../utils/sendSuccess.js"
 import { ENV } from "../../../../config/env.js"
 
 import type { Request, Response } from "express"
-import type { RegisterUserInput } from "../auth/schemas/register.user.schema.js"
+import type { RegisterUserInput } from "./schemas/auth.register.schema.js"
 
 import * as service from "../auth/auth.service.js"
 
@@ -16,15 +16,15 @@ export const register = asyncHandler(async(req: Request<unknown, unknown, Regist
 
   const { user, refreshToken } = await service.registerUser(req.body)
 
+  const isProd = ENV.NODE_ENV === "production";
+  
   res.cookie("refreshToken", refreshToken, {
     httpOnly: true,
-    secure: ENV.NODE_ENV === "development"
-    ? false
-    : true,
-    sameSite: "none",
-    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 dias
-    /* path: "/auth/refresh" */
-  })
+    secure: isProd,
+    sameSite: isProd ? "none" : "lax",
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+    path: "/api/v1/auth/refresh",
+  });
 
   logger.info("saiu")
 

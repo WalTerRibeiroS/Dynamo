@@ -1,31 +1,30 @@
 import pool from "../../../../config/db.js"
 
-export const getUserByEmail = async(email: string) => {
-  const res = await pool.query(
-    `
-    SELECT * FROM users WHERE email=$1
-    `, [email]
-  )
-  return res.rows[0]
-}
+import type { CreatedUser } from "../../../../types/user.js"
+import type { CreateUserInput } from "../../../../types/user.js"
 
-export const getUserByUsername = async(username: string) => {
+//fiz dessa maneira pq o objetivo dessa funcao é apenas verificar se o email/username existe ou n no db
+//como username e email tem a constraind UNIQUE ou existe 1 ou n
+export const emailExists = async (email: string): Promise<boolean> => {
   const res = await pool.query(
-    `
-    SELECT * FROM users WHERE username=$1
-    `, [username]
-  )
-  return res.rows[0]
-}
+    `SELECT 1 FROM users WHERE email = $1`,
+    [email]
+  );
 
-export const createUser = async(
-  id: string, 
-  username: string, 
-  email: string,
-  password_hash: string,
-  refreshTokenHash: string
-) => {
+  return res.rows.length > 0;
+};
+
+export const usernameExists = async (username: string): Promise<boolean> => {
   const res = await pool.query(
+    `SELECT 1 FROM users WHERE username = $1`,
+    [username]
+  );
+
+  return res.rows.length > 0;
+};
+
+export const createUser = async({ id, username, email, passwordHash, refreshTokenHash }: CreateUserInput): Promise<CreatedUser> => {
+  const res = await pool.query<CreatedUser>(
     `
     INSERT INTO users
       (
@@ -36,15 +35,16 @@ export const createUser = async(
         refresh_token_hash
       )
     VALUES($1, $2, $3, $4, $5)
-    RETURNING*    
+    RETURNING id, username    
     `, 
     [
       id, 
       username, 
       email, 
-      password_hash, 
+      passwordHash, 
       refreshTokenHash
     ]
   )
+  console.log('res é isso:', res)
   return res.rows[0]
 }
