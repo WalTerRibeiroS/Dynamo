@@ -66,7 +66,7 @@ describe("auth.repository (integração)", () => {
           passwordHash: "hash-fake", 
           refreshTokenHash: "refresh-hash-fake",
         })
-      ).rejects.toMatchObject({ code: "23505" });
+      ).rejects.toMatchObject({ code: "DUPLICATE_FIELD" });
     });
   })
 })

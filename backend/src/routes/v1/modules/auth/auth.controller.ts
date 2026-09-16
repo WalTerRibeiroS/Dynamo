@@ -12,8 +12,6 @@ const logger = baseLogger.child({ layer: "controller"})
 
 export const register = asyncHandler(async(req: Request<unknown, unknown, RegisterUserInput>, res: Response) => {
 
-  logger.info("entrou")
-
   const { user, refreshToken } = await service.registerUser(req.body)
 
   const isProd = ENV.NODE_ENV === "production";
@@ -25,8 +23,6 @@ export const register = asyncHandler(async(req: Request<unknown, unknown, Regist
     maxAge: 7 * 24 * 60 * 60 * 1000,
     path: "/api/v1/auth/refresh",
   });
-
-  logger.info("saiu")
 
   return sendSuccess(res, {
     statusCode: 201,

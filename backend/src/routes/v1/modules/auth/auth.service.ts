@@ -13,14 +13,12 @@ import * as repository from "../auth/auth.repository.js"
 const logger = baseLogger.child({ layer: "service"})
 
 export const registerUser = async(userData: RegisterUserInput) => {
-
-  logger.info("entrou")
-
+  
   const issues: Issue[] = []
 
   const { username , email, password} = userData
 
-  /* const [emailInUse, usernameInUse] = await Promise.all([
+  const [emailInUse, usernameInUse] = await Promise.all([
     repository.emailExists(email),
     repository.usernameExists(username),
   ]);
@@ -43,7 +41,7 @@ export const registerUser = async(userData: RegisterUserInput) => {
 
   if (issues.length > 0) {
     throw new ValidationError({ issues })
-  } */
+  }
 
   const passwordHash = await bcrypt.hash(password, 10)
   const id = uuidv7()
@@ -61,7 +59,6 @@ export const registerUser = async(userData: RegisterUserInput) => {
   const newUser = await repository.createUser(createUserInput)
 
   const user = { ...newUser, accessToken}
-  logger.info("saiu", )
-
+  
   return { user, refreshToken }
 }

@@ -8,8 +8,8 @@
     "build": "tsc",
     "start": "node dist/server.js",
     "lint": "eslint . --fix && prettier --write .",
-    "test:unit": "vitest run src/testes/unit",
-    "test:integration": "cross-env DB_NAME=Dynamo_test vitest run src/testes/integration --no-file-parallelism",
+    "test:unit": "vitest run src/tests/unit",
+    "test:integration": "cross-env DB_NAME=Dynamo_test vitest run src/tests/integration --no-file-parallelism",
     "test": "npm run test:unit && npm run test:integration"
   },
   "keywords": [],

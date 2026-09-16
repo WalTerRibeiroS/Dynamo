@@ -15,12 +15,12 @@ TypeScript (front e back)
 Node e express
 
 ### Frontend
-React, Tailwindcss usando vite
+React, react-compiler e Tailwindcss
 
 ### Banco de dados
 PostgreSQL
 
-Para entender o esquema e exemplos ds tabelas, consulte [docs/db](./docs/db).
+Consulte arquivos dentro de `docs/db` quando necessário para entender o funcionamento das tabelas dentro do projeto
 
 ### Testes automatizados
 vitest, RTL (react testing library), Playwright
@@ -163,4 +163,4 @@ O agente pode mencionar essas possibilidades quando forem relevantes, mas não d
 
 ## Fluxo de desenvolvimento
 
-O projeto é desenvolvido 100% na brach dev, features novas só são mergeadas pra main quando desenvolvidas por interiro, testadas e passaram por uma code review.
+O projeto é desenvolvido 100% na brach dev, features novas só são mergeadas pra main quando desenvolvidas por inteiro, testadas e passarem por uma code review.
