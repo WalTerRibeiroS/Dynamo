@@ -1,6 +1,6 @@
 # O que é o Dynamo?
 
-O Dynamo é um forma de centralizar e organizar o processo de estudo em uma estrutura visual baseada em canvas e mapas visuais, conectando conteúdos, materiais, anotações, planejamento e revisão tudo em um lugar só, resolvendo o problema de desconexão entre diferentes elementos do estudo
+O Dynamo é um forma de centralizar e organizar o processo de estudo em uma estrutura visual baseada em canvas e mapas visuais, conectando conteúdos, materiais, anotações e planejamento tudo em um lugar só, resolvendo o problema de desconexão entre diferentes elementos do estudo
 
 Imagine que você precisa estudar linux, você tem documentação, videos, cursos, anotações tudo fragmentado em lugares diferentes.
 
@@ -16,7 +16,6 @@ O Dynamo tenta criar uma camada de organização sobre tudo isso, descomplicando
 | Markdown será importado ou sincronizado?                  | importado                                     |
 | Usuários individuais ou multiusuário?                     | individuais                                   |
 | Haverá colaboração?                                       | não                                           |
-| Flashcards terão algoritmo próprio de repetição espaçada? | sim                                           |
 | Busca global?                                             | busca apenas no workspace                     |
 | WebSocket?                                                | Não                                           |
 | Upload de arquivos?                                       | apenas extracao dos conteudos de arquivos .md |
@@ -42,7 +41,7 @@ segurar o esquerdo na area vazia movimenta o canva/tela
 
 ### Dominios
 
-São eles que contem em um mesmo lugar o conteudo que pode ser links de videos, cursos, documentacoes, anotações que devem ser exportadas do obsidian, revisão criando flashcards próprios
+São eles que contem em um mesmo lugar o conteudo que pode ser links de videos, cursos, documentacoes e anotações que devem ser exportadas do obsidian
 
 Dominios podem ser posicionados em qualquer lugar do canva adicionado um significado visual significativo para o(s) dominio(s)
 
@@ -56,8 +55,6 @@ e linha de prioridade/direcao (uma flecha de um dominio pra outro)
 
 com o menu sidebar (no mode edicao)
 pode ser adicionado conteudo, anotacoes podendo tbm na hora que clica em "adicionar dominio" ou clicando em um dominio ja existente em um campo "adicionar"
-
-criar flash cards personalizados na sessao revisao
 
 ### Fora do workspace (partes em volta)
 
@@ -85,7 +82,7 @@ Sim zoom deve se manter igual estava quando saiu do workspace, posicao dos domin
 ### Relacionamentos entre domínios
 é apenas visual, tanto o com seta ou só linha
 ### Exclusao de dominios
-ao excluir um dominio é feito um efeito em cascada tudo q estava "dentro" do dominio é deletado (conteudo, notas, revisao (flashcards) e relacionamento entre dominios)
+ao excluir um dominio é feito um efeito em cascada tudo q estava "dentro" do dominio é deletado (conteudo, notas e relacionamento entre dominios)
 
 para excluir e necessario clicar com o botao direito sobre o dominio e ir na opcao "deletar dominio"
 ### Estrutura/como funciona da Sessão "Conteudo"
@@ -105,15 +102,11 @@ Tbm vai ser uma opcao na parte de conteudo onde é possivel selecionar apenas pa
 
 vai ter uma opcao que é extrai o markdown de um arquivo para html ou markdown n me decidi ainda para ser visivel na sessao
 
-### Estrutura/como funciona da Sessão "Revisão"
-opcao criar flash card, onde coloca a pergunta e a resposta da pergunta e apartir disso tem um flash card disponivel para treinar
-
-Ao clicar no flash card criado so mostra a pergunta e mostra a resposta apos clicar em "mostrar resposta" pra checar se esta correto com o q o usuario achou q era e ele pode selecionar se ele acertou ou errou
 ### Esclarecendo Modo edicao/leitura na sidebar do dominio
 Mode de leitura/edicao é possivel ser feito toggle entre eles apenas na sidebar do dominio e valera para todos os dominios daquele workspace, porem a criacao de dominios sempre sera possivel independente do modo, ou seja so vale pras sessoes dentro dos dominios
 
 Só sera possivel criar, deletar ou editar descricao do conteudo; links, documentacao no modo edicao, no modo leitura n sera possivel
-mesma coisa pra exportacao de notas ou criacao de flash cards
+mesma coisa pra exportacao de notas
 
 quando esta no modo edicao é visivel certas "sugestoes"
 
@@ -155,37 +148,7 @@ Eu ainda to pensando em como eu posso fazer com q fique coerrente uma opcao "alt
 - Nota 4 [flecha cima baixo]
 ```
 
-com os flash cards seria so possivel adicionar, deletar e editar no modo edicao, no de leitura seria so possivel "responder" os flash cards
-
-`Revisão | modo edicao`
-```
-flashcard 1 | [icone de edicao, q contem deletar editar]
-flashcard 2 | [icone de edicao, q contem deletar editar]
-flashcard 3 | [icone de edicao, q contem deletar editar]
-
-[adicionar novo flashcard]
-```
-
-`Revisão | modo leitura`
-```
-flashcard 1
-flashcard 2
-flashcard 3
-```
-
-Ainda n sei como fazer o algoritmo dos flashcards de revisao espaçada
-
 Talvez no momento q edita algo no modo edicao aparece uma opcao de salvar alteracoes? pq dai eu n precisaria mandar uma req a cada alteracao, adicao, delatacao
-
-Dai ai entraria talvez o redu undo?
-
-Estados do flashcard
-
-última revisão
-número de acertos
-número de erros
-intervalo atual (2 -5 - 7 - 15 - 30 dias)
-próxima revisão
 
 ### Sobre a Busca
 N sei exatamente como ela deve se comportar mas provavelmente sim ela deve funcionar tanto no workspace quanto nas sessoes do dominio
@@ -248,11 +211,6 @@ Nota 1 - Donec id tortor quam. Curabitur lorem metus, dictum nec felis nec, male
 Nota 2 - at gravida molestie, quam lacus accumsan orci, in sagittis mi leo quis nisl. Pellentesque sit amet porttitor velit. In maximus dui at sollicitudin feugiat.
 ```
 
-### Busca
-Entidades n pesquisaveis (pq é mais facil do q listar todas q sao)
-- O elemento da busca q esta presente na resposta do flashcard, mas a pergunta ainda é pesquisavel
-ou seja se eu pesquisar "linux" na busca n deve aparecer na contagem ou levar para 'linux' q esta na resposta do flashcard
-
 ### Canvas
 Mover domínios é permitido no modo leitura? Sim
 
@@ -284,21 +242,6 @@ Interface de ordenação, o padrao sera "Todos", com sempre a descriacao como pr
 
 ### Anotacoes
 Interface de ordenacao vai ser por meio de um submenu drag and drop
-
-### Revisão
-Estado interno do flashcard
-- última revisão
-- número de acertos
-- número de erros
-- intervalo atual (2 -5 - 7 - 15 - 30 dias)
-- próxima revisão
-
-Como funciona uma sessão de revisão
-a sessao de revisao é o nome q eu me refiro a sessao no dominio q "armazena" os flashcards relacionados ao dominio
-
-Quantos flashcards aparecem por sessão, limite ainda n definido mas talvez uns 100 como limite deve estar bom
-
-Como escolher os cards que devem ser revisados, o proprio user define isso baseado na necessidade ou as infromacoes de estado do card como ultima revisao e os outros
 
 ### Edição
 

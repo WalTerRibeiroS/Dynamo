@@ -1,12 +1,14 @@
 export type CreatedUser = {
-  id: string;
-  username: string;
-};
+  id: string
+  username: string
+}
 
 export type CreateUserInput = {
-  id: string, 
-  username: string, 
-  email: string,
-  passwordHash: string,
+  id: string
+  username: string
+  email: string
+  passwordHash: string
   refreshTokenHash: string
 }
+
+export type UserPasswordId = Pick<CreateUserInput, 'id' | 'passwordHash'>

@@ -1,5 +1,5 @@
-import pool from "../config/db.js"
+import pool from '../config/db.js'
 
 export async function resetDatabase() {
-  await pool.query("TRUNCATE TABLE users RESTART IDENTITY CASCADE")
+  await pool.query('TRUNCATE TABLE users RESTART IDENTITY CASCADE')
 }

@@ -11,14 +11,14 @@ export type DomainCode =
   | 'NOT_MULTIPLE_OF'
   | 'UNRECOGNIZED_KEYS'
   | 'RATE_LIMITED'
-
-  | "EMAIL_ALREADY_EXISTS"
-  | "USERNAME_ALREADY_EXISTS"
+  | 'EMAIL_ALREADY_EXISTS'
+  | 'USERNAME_ALREADY_EXISTS'
+  | 'INVALID_CREDENCIALS'
 
 export type Issue = {
-  field?: string
   message: string
-  code?: DomainCode
+  code: DomainCode
+  field?: string
 }
 
 //code, posso mandar um INVALID_VALUE com o campo, e ja realcar em vermelho junto com a message

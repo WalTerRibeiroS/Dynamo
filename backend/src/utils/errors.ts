@@ -61,14 +61,14 @@ export class ValidationError extends AppError<'VALIDATION_ERROR'> {
   }
 }
 
-export class TooManyRequestsError extends AppError<"RATE_LIMITED"> {
+export class TooManyRequestsError extends AppError<'RATE_LIMITED'> {
   constructor(retryAfterSeconds: number) {
     super({
-      message: "Muitas tentativas. Tente novamente em instantes",
+      message: 'Muitas tentativas. Tente novamente em instantes',
       statusCode: 429,
-      code: "RATE_LIMITED",
+      code: 'RATE_LIMITED',
       publicDetails: { retryAfter: retryAfterSeconds },
-    });
+    })
   }
 }
 

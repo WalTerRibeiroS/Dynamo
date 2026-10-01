@@ -11,8 +11,6 @@ O usuário pode:
 - organizar domínios;
 - gerenciar conteúdos;
 - importar anotações;
-- gerenciar flashcards;
-- realizar revisões;
 - pesquisar;
 - configurar preferências.
 
@@ -111,8 +109,8 @@ Usuário autenticado e apto a utilizar seus Workspaces.
 ```
 
 **Dados necessários para criação:**  
-Nome do workspace
-Tema
+Nome do workspace  
+Tema  
 
 ---
 
@@ -202,10 +200,9 @@ O usuário **não precisa executar uma ação de salvamento**.
 2. Usuário clica em `deletar workspace ${seuWorkspace}?`.
 3. Havera duas opcoes, cancelar e deletar workspace ${seuWorkspace}.
 4. Tudo relacionado ao workspace é deletado.
-5.Sistema remove todos os domínio.
-5. Sistema remove seus conteúdos.
-6. Sistema remove suas anotações.
-7. Sistema remove seus flashcards.
+5. Sistema remove todos os domínios.
+6. Sistema remove seus conteúdos.
+7. Sistema remove suas anotações.
 8. Sistema remove seus relacionamentos.
 ```
 
@@ -340,8 +337,7 @@ Isso é permitido independentemente do modo leitura/edição.
 2. Sistema abre a Sidebar.
 3. Sidebar apresenta:
    ├── Conteúdo
-   ├── Anotações
-   └── Revisão
+   └── Anotações
 ```
 
 ---
@@ -382,8 +378,7 @@ Usuário deve acessar o menu contextual do domínio.
 6. Sistema remove o domínio.
 7. Sistema remove seus conteúdos.
 8. Sistema remove suas anotações.
-9. Sistema remove seus flashcards.
-10. Sistema remove seus relacionamentos.
+9. Sistema remove seus relacionamentos.
 ```
 
 ### Cancelamento
@@ -473,8 +468,7 @@ A criação de domínios continua disponível independentemente do modo.
 O modo afeta somente:
 
 - Conteúdo;
-- Anotações;
-- Revisão.
+- Anotações.
 
 ---
 
@@ -724,151 +718,9 @@ O conteúdo aparece como texto corrido.
 
 ---
 
-# 11. Revisão
+# 11. Busca
 
-## UC30 — Criar flashcard
-
-**Ator:** Usuário
-
-**Modo:** Edição
-
-### Dados
-
-```
-Pergunta
-Resposta
-```
-
-### Fluxo
-
-```
-1. Usuário acessa Revisão.
-2. Seleciona "Adicionar flashcard".
-3. Informa pergunta.
-4. Informa resposta.
-5. Sistema cria flashcard.
-```
-
----
-
-## UC31 — Editar flashcard
-
-**Ator:** Usuário
-
-**Modo:** Edição
-
-Pode modificar:
-
-- pergunta;
-- resposta.
-
-**Persistência da alteração:** `[A DEFINIR conforme regra de salvamento da operação]`
-
----
-
-## UC32 — Deletar flashcard
-
-**Ator:** Usuário
-
-**Modo:** Edição
-
-Sistema remove o flashcard do domínio.
-
-**Confirmação:** `[A DEFINIR]`
-
----
-
-## UC33 — Iniciar revisão
-
-**Ator:** Usuário
-
-**Modo:** Leitura
-
-O usuário acessa a seção Revisão e seleciona os flashcards que deseja revisar.
-
-A seleção poderá utilizar:
-
-- necessidade definida pelo usuário;
-- estado de revisão do flashcard.
-
-**Fluxo exato de seleção:** `[A DEFINIR]`
-
----
-
-## UC34 — Responder flashcard
-
-**Ator:** Usuário
-
-**Modo:** Leitura
-
-### Fluxo
-
-```
-1. Sistema apresenta a pergunta.
-2. Resposta permanece oculta.
-3. Usuário pensa na resposta.
-4. Usuário seleciona "Mostrar resposta".
-5. Sistema apresenta a resposta.
-6. Usuário informa se acertou ou errou.
-7. Sistema registra o resultado.
-8. Sistema atualiza o estado do flashcard.
-```
-
----
-
-## UC35 — Atualizar estado de revisão
-
-**Ator:** Sistema
-
-Após uma resposta, o sistema atualiza:
-
-```
-Última revisão
-Número de acertos
-Número de erros
-Intervalo atual
-Próxima revisão
-```
-
-Intervalos inicialmente previstos:
-
-```
-2 dias
-5 dias
-7 dias
-15 dias
-30 dias
-```
-
-### Algoritmo
-
-O algoritmo exato:
-
-`[A DEFINIR]`
-
----
-
-## UC36 — Limitar quantidade de flashcards em uma sessão
-
-**Ator:** Sistema
-
-Existe intenção de estabelecer um limite de aproximadamente:
-
-```
-100 flashcards
-```
-
-por sessão.
-
-Valor definitivo:
-
-`[A DEFINIR]`
-
----
-
-# 12. Busca
-
-## UC37 — Pesquisar no Workspace
+## UC30 — Pesquisar no Workspace
 
 **Ator:** Usuário
 
@@ -887,7 +739,7 @@ Valor definitivo:
 
 ---
 
-## UC38 — Pesquisar conteúdo de domínio
+## UC31 — Pesquisar conteúdo de domínio
 
 A busca pode encontrar ocorrências dentro das informações dos domínios.
 
@@ -908,27 +760,11 @@ Linux Networking
 
 Anotação:
 "... Linux ..."
-
-Flashcard pergunta:
-"O que é Linux?"
 ```
-
-Mas não:
-
-```
-Flashcard resposta:
-"Linux é um kernel..."
-```
-
-### Regra definida
-
-**Pergunta de flashcard → pesquisável**
-
-**Resposta de flashcard → não pesquisável**
 
 ---
 
-## UC39 — Navegar entre resultados
+## UC32 — Navegar entre resultados
 
 A interface deverá permitir navegar pelos resultados, por exemplo:
 
@@ -959,19 +795,19 @@ A ocorrência deverá ser destacada.
 
 ---
 
-# 13. Configurações
+# 12. Configurações
 
-## UC40 — Alterar tema global
+## UC33 — Alterar tema global
 
 **Ator:** Usuário
 
 O usuário pode configurar o tema geral da aplicação.
 
-**Temas disponíveis:** Escuro, Branco e o Padrão do sistemas
+**Temas disponíveis:** Escuro, Branco e o Padrão do sistema
 
 ---
 
-## UC41 — Configurar atalhos
+## UC34 — Configurar atalhos
 
 **Ator:** Usuário
 
@@ -994,7 +830,7 @@ Maximizar Sidebar
 
 ---
 
-# 14. Persistência das alterações
+# 13. Persistência das alterações
 
 Existe uma regra geral ainda não fechada:
 
@@ -1006,7 +842,7 @@ As operações deverão ser classificadas individualmente posteriormente.
 
 ---
 
-# 15. Casos de uso ainda importantes a definir
+# 14. Casos de uso ainda importantes a definir
 
 Depois de transformar suas ideias em casos de uso, apareceram algumas lacunas que **não precisamos resolver agora**, mas que vale registrar.
 
@@ -1034,15 +870,6 @@ Depois de transformar suas ideias em casos de uso, apareceram algumas lacunas qu
 - O HTML gerado será armazenado no banco ou Markdown + HTML? — `[A DEFINIR]`
 - Tratamento de imagens/referências externas do `.md` — `[A DEFINIR]`
 - O que acontece quando o `.md` contém recursos que não podem ser importados? — `[A DEFINIR]`
-
-### Flashcards
-
-- Como o usuário escolhe os cards para revisar — `[A DEFINIR]`
-- Como funciona uma sessão de revisão — `[A DEFINIR]`
-- Algoritmo de repetição espaçada — `[A DEFINIR]`
-- O que acontece quando o usuário erra — `[A DEFINIR]`
-- O que acontece quando acerta — `[A DEFINIR]`
-- Limite de cards — `[A DEFINIR]`
 
 ### Busca
 

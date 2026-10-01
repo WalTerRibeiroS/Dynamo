@@ -68,7 +68,6 @@ Workspace
 ├── Domínios
 ├── Conteúdos
 ├── Anotações
-├── Flashcards
 └── Relacionamentos
 ```
 
@@ -175,7 +174,6 @@ Ao excluir um domínio:
 Domínio
 ├── Conteúdos
 ├── Anotações
-├── Flashcards
 └── Relacionamentos
 ```
 
@@ -342,103 +340,6 @@ Essa ordem pode ser modificada pelo usuário.
 
 ---
 
-# Flashcards
-
-### RN22 — Flashcard pertence a um domínio
-
-```
-Domínio
-   │
-   ├── Flashcard
-   ├── Flashcard
-   └── Flashcard
-```
-
----
-
-### RN23 — Flashcard possui pergunta e resposta
-
-```
-Flashcard
-├── pergunta
-└── resposta
-```
-
----
-
-### RN24 — Resposta permanece oculta inicialmente
-
-Durante a revisão:
-
-```
-Pergunta
-   ↓
-Mostrar resposta
-   ↓
-Resposta
-```
-
----
-
-### RN25 — Usuário avalia a própria resposta
-
-Depois de visualizar a resposta, o usuário informa:
-
-```
-Acertei
-```
-
-ou
-
-```
-Errei
-```
-
----
-
-### RN26 — O resultado altera o estado do flashcard
-
-O sistema mantém:
-
-```
-última revisão
-acertos
-erros
-intervalo atual
-próxima revisão
-```
-
----
-
-### RN27 — Flashcards utilizam repetição espaçada
-
-O Dynamo terá um algoritmo próprio.
-
-Intervalos atualmente considerados:
-
-```
-2 → 5 → 7 → 15 → 30 dias
-```
-
-O algoritmo exato ainda não está definido.
-
----
-
-### RN27.5 — O Limite de Flash cards por Domínio é de 100
-
-```
-Revisão
-   │
-   ├── Flashcard 1
-   ├── Flashcard 2
-   ├── Flashcard 3
-   ├── Flashcard 4
-   . . .
-   └── Flashcard 100 [máximo]
-```
-
----
-
 # Busca
 
 ### RN28 — Busca é limitada ao Workspace atual
@@ -454,38 +355,6 @@ a busca não deve retornar informações de:
 ```
 Workspace B
 ```
-
----
-
-### RN29 — Perguntas de flashcards são pesquisáveis
-
-Se:
-
-```
-Pergunta:
-"O que é Linux?"
-```
-
-então:
-
-```
-buscar "Linux"
-```
-
-pode encontrar esse flashcard.
-
----
-
-### RN30 — Respostas de flashcards não são pesquisáveis
-
-Se:
-
-```
-Resposta:
-"Linux é um kernel..."
-```
-
-a palavra `Linux` nessa resposta **não deve gerar resultado**.
 
 ---
 
@@ -527,7 +396,6 @@ Ele afeta:
 ```
 Conteúdo
 Anotações
-Revisão
 ```
 
 ---

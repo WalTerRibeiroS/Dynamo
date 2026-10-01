@@ -11,14 +11,16 @@ export default [
     files: ['**/*.ts'],
     languageOptions: {
       globals: globals.node,
+      parserOptions: {
+        projectService: true,
+      },
     },
     rules: {
       'no-unused-vars': 'off',
-      '@typescript-eslint/no-unused-vars': "off",
+      '@typescript-eslint/no-unused-vars': 'off',
 
       '@typescript-eslint/no-explicit-any': 'warn',
       'no-console': 'off',
-      'require-await': 'error',
     },
   },
   eslintConfigPrettier, //sempre por ultimo

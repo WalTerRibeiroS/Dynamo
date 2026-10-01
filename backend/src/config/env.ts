@@ -1,10 +1,10 @@
-import "dotenv/config"
+import 'dotenv/config'
 
-import { z } from "zod"
+import { z } from 'zod'
 
 const envSchema = z.object({
   PORT: z.coerce.number().int().positive(),
-  NODE_ENV: z.enum(["development", "test", "production"]),
+  NODE_ENV: z.enum(['development', 'test', 'production']),
 
   FRONTEND_URL: z.url(),
   BACKEND_URL: z.url(),

@@ -1,33 +1,71 @@
-import baseLogger from "../../../../utils/logger.js"
-import { asyncHandler } from "../../../../utils/asyncHandler.js"
-import { sendSuccess } from "../../../../utils/sendSuccess.js"
-import { ENV } from "../../../../config/env.js"
+import baseLogger from '../../../../utils/logger.js'
+import { asyncHandler } from '../../../../utils/asyncHandler.js'
+import { sendSuccess } from '../../../../utils/sendSuccess.js'
+import {
+  setRefreshTokenCookie,
+  clearRefreshTokenHashCookie,
+  REFRESH_COOKIE_NAME,
+} from './auth.cookie.js'
 
-import type { Request, Response } from "express"
-import type { RegisterUserInput } from "./schemas/auth.register.schema.js"
+import type { Request, Response } from 'express'
+import type { RegisterUserInput } from './schemas/auth.register.schema.js'
+import type { LoginUserInput } from './schemas/auth.login.schema.js'
 
-import * as service from "../auth/auth.service.js"
+import * as service from '../auth/auth.service.js'
 
-const logger = baseLogger.child({ layer: "controller"})
+//const logger = baseLogger.child({ layer: "controller"})
 
-export const register = asyncHandler(async(req: Request<unknown, unknown, RegisterUserInput>, res: Response) => {
+/*
+ * req.params  → unknown
+ * res.body    → unknown
+ * req.body    → RegisterUserInput
+ */
 
-  const { user, refreshToken } = await service.registerUser(req.body)
+export const register = asyncHandler(
+  async (req: Request<unknown, unknown, RegisterUserInput>, res: Response) => {
+    const { user, refreshToken } = await service.registerUser(req.body)
 
-  const isProd = ENV.NODE_ENV === "production";
-  
-  res.cookie("refreshToken", refreshToken, {
-    httpOnly: true,
-    secure: isProd,
-    sameSite: isProd ? "none" : "lax",
-    maxAge: 7 * 24 * 60 * 60 * 1000,
-    path: "/api/v1/auth/refresh",
-  });
+    setRefreshTokenCookie(res, refreshToken)
+
+    return sendSuccess(res, {
+      statusCode: 201,
+      data: {
+        createdUser: user,
+      },
+    })
+  },
+)
+
+export const login = asyncHandler(
+  async (req: Request<unknown, unknown, LoginUserInput>, res: Response) => {
+    const { accessToken, refreshToken } = await service.loginUser(req.body)
+
+    setRefreshTokenCookie(res, refreshToken)
+
+    return sendSuccess(res, {
+      data: accessToken,
+    })
+  },
+)
+
+export const refresh = asyncHandler(async (req: Request, res: Response) => {
+  const cookieRefreshToken: unknown = req.cookies?.[REFRESH_COOKIE_NAME]
+
+  const { accessToken, refreshToken } = await service.refreshSession(cookieRefreshToken)
+
+  setRefreshTokenCookie(res, refreshToken)
 
   return sendSuccess(res, {
-    statusCode: 201,
-    data: {
-      createdUser: user
-    }
+    data: accessToken,
   })
+})
+
+export const logout = asyncHandler(async (req: Request, res: Response) => {
+  const cookieRefreshToken: unknown = req.cookies?.[REFRESH_COOKIE_NAME]
+
+  await service.logoutUser(cookieRefreshToken)
+
+  clearRefreshTokenHashCookie(res)
+
+  res.sendStatus(204)
 })

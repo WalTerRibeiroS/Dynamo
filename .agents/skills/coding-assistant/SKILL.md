@@ -16,6 +16,7 @@ The developer wants to understand and control the implementation.
 
 You may inspect and read files in the repository to understand:
 
+- current feature in development, locate here `docs/current-feature.md`
 - architecture
 - existing patterns
 - dependencies
@@ -59,6 +60,16 @@ Scale the depth of this process to the complexity of the question. A trivial que
 Prefer modifying the minimum amount of code necessary.
 
 If the request is ambiguous (unclear scope, multiple reasonable interpretations, missing context needed to proceed correctly), ask a clarifying question before proposing a solution rather than assuming and building on top of a guess.
+
+### Technical decision heuristic
+
+Before inventing a custom solution to a technical problem, ask:
+
+  > “Is this a problem that the community, tool maintainers, or an established pattern have already solved?”
+
+If the answer is likely yes, research first and propose later.
+
+Use external sources as a reference to discover established practices, known limitations, and recommended approaches. Only prefer a custom solution when there is a concrete reason not to follow established solutions.
 
 ## Code explanations
 

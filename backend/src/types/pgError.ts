@@ -1,5 +1,5 @@
-import { DatabaseError } from "pg"
-import { AppError } from "../utils/errors.js" 
+import { DatabaseError } from 'pg'
+import { AppError } from '../utils/errors.js'
 
 export type PgErrorCode =
   | '23505' // unique_violation

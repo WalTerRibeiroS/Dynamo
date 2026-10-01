@@ -1,166 +1,164 @@
 # Agents
 
-## Objetivo do projeto 
+## Project Goal
 
-O Dynamo é um projeto pessoal e casual desenvolvido principalmente com objetivo de aprendizado prático.
+Dynamo is a casual personal project developed primarily for hands-on learning.
 
-O objetivo principal não é criar um produto comercial, uma arquitetura altamente escalável ou uma aplicação preparada para uma equipe grande. O objetivo é aprender, na prática, como desenvolver uma aplicação full-stack utilizando:
+The main goal is not to create a commercial product, a highly scalable architecture, or an application built for a large team. The goal is to learn, in practice, how to develop a full-stack application using:
 
-## Tecnologias usadas
+## Technologies Used
 
-### Linguagem
-TypeScript (front e back)
+### Language
+TypeScript (frontend and backend)
 
-### Backend
-Node e express
+#### TypeScript Conventions
+When using TypeScript, read `docs/typescript-conventions.md` before making changes involving TypeScript code. Treat the document as the source of truth for project-specific TypeScript conventions.
+
+### API / Backend
+Node and Express
+
+#### API Conventions
+When developing or modifying API routes, read docs/api-conventions.md before making changes to the API. Treat the document as the source of truth for project-specific API conventions.
 
 ### Frontend
-React, react-compiler e Tailwindcss
+React, React Compiler, and Tailwind CSS
 
-### Banco de dados
+When using **React**, refer to `docs/react-conventions.md` for the correct guidelines and style to follow.
+
+### Database
 PostgreSQL
 
-Consulte arquivos dentro de `docs/db` quando necessário para entender o funcionamento das tabelas dentro do projeto
+Refer to files inside `docs/db` when needed to understand how the tables operate within the project.
 
-### Testes automatizados
-vitest, RTL (react testing library), Playwright
+### Automated Testing
+Vitest, RTL (React Testing Library), Playwright
 
-### Deploy
-Backend e DB postgres com railway
-Frontend vercel
+### Deployment
+Backend and PostgreSQL DB with Railway
+Frontend with Vercel
 
-### Princípio da arquitetura
-Priorizar uma organização clara entre responsabilidades, sem criar uma arquitetura excessivamente fragmentada.
+### Architectural Principle
+Prioritize a clear division of responsibilities without creating an overly fragmented architecture.
 
-Separar responsabilidades quando isso melhorar a compreensão e manutenção do código, mas evitar criar arquivos, classes ou camadas apenas para seguir uma estrutura pré-definida.
+Separate concerns whenever it improves code comprehension and maintainability, but avoid creating files, classes, or layers merely to adhere to a predefined structure.
 
-O agente deve levar esse objetivo em consideração em todas as sugestões, implementações e revisões de código.
+The agent must keep this goal in mind across all suggestions, implementations, and code reviews.
 
-## Princípio mais importante: simplicidade
+## Most Important Principle: Simplicity
 
-Este projeto não deve receber complexidade arquitetural sem necessidade.
+This project must not receive unnecessary architectural complexity.
 
-### Sobre este princípio
+### About This Principle
 
-Este projeto valoriza conhecer arquiteturas e padrões de design mais 
-complexos — Clean Architecture, DDD, CQRS, etc. Saber que eles existem, 
-entender seus trade-offs e reconhecer quando um problema pede esse tipo 
-de solução é parte importante do aprendizado.
+This project values knowing more complex architectures and design patterns — Clean Architecture, DDD, CQRS, etc. Knowing they exist, understanding their trade-offs, and recognizing when a problem calls for that kind of solution is an important part of learning.
 
-O que este princípio pede não é ignorância desses padrões, e sim 
-disciplina na hora de aplicá-los: eles resolvem problemas específicos, 
-em contextos específicos, e nem todo projeto — principalmente este — 
-tem esses problemas agora. Aplicar um padrão porque ele é "a forma 
-certa de fazer" ou porque aparece em todo tutorial não é o mesmo que 
-aplicá-lo porque o projeto genuinamente precisa dele.
+What this principle asks for is not ignorance of these patterns, but rather discipline when applying them: they solve specific problems in specific contexts, and not every project — especially this one — has those problems right now. Applying a pattern because it is "the right way to do it" or because it appears in every tutorial is not the same as applying it because the project genuinely needs it.
 
-Ou seja: o agente não deve tratar esses padrões como algo a ser evitado 
-por serem ruins, mas como ferramentas que só valem a pena quando o 
-problema que elas resolvem já existe de fato no projeto.
+In other words: the agent should not treat these patterns as something to be avoided because they are bad, but as tools that are only worthwhile when the problem they solve actually exists in the project.
 
-Não introduzir automaticamente:
+Do not automatically introduce:
 
 - Clean Architecture;
 - Hexagonal Architecture;
 - DDD;
 - CQRS;
 - Event Sourcing;
-- sistemas de eventos;
-- microsserviços;
-- múltiplas camadas de abstração;
-- design patterns apenas para "seguir padrões";
-- repositories/services/factories abstratos sem necessidade;
-- containers de dependência;
-- sistemas genéricos excessivamente reutilizáveis;
-- abstrações criadas antecipadamente para possíveis necessidades futuras.
+- Event systems;
+- Microservices;
+- Multiple abstraction layers;
+- Design patterns merely to "follow patterns";
+- Abstract repositories/services/factories without necessity;
+- Dependency injection containers;
+- Overly generic, reusable systems;
+- Abstractions created in advance for possible future needs.
 
-Essas abordagens não são proibidas.
+These approaches are not forbidden.
 
-Elas podem ser utilizadas quando existir um problema concreto no projeto que seja resolvido de forma significativa por elas.
+They may be used when a concrete problem exists in the project that is meaningfully solved by them.
 
-Antes de introduzir uma abstração ou padrão mais complexo, o agente deve considerar:
+Before introducing an abstraction or a more complex pattern, the agent must consider:
 
-1. Qual problema concreto isso resolve?
-2. Esse problema realmente existe no projeto atualmente?
-3. Existe uma solução mais simples?
-4. A complexidade adicionada é justificável pelo benefício?
-5. Isso ajuda no aprendizado ou apenas adiciona estrutura?
+1. What concrete problem does this solve?
+2. Does this problem actually exist in the project right now?
+3. Is there a simpler solution?
+4. Is the added complexity justified by the benefit?
+5. Does this help with learning or does it merely add structure?
 
-Se a resposta indicar que a complexidade não é necessária, preferir a solução simples.
+If the answer indicates that complexity is not necessary, prefer the simple solution.
 
-### Regra prática
+### Practical Rule
 
-Não projetar para um problema que o projeto ainda não possui.
+Do not design for a problem the project does not yet have.
 
-## Não confundir simplicidade com má prática
+## Do Not Confuse Simplicity with Bad Practice
 
-O objetivo de manter o projeto simples não significa ignorar boas práticas.
+The goal of keeping the project simple does not mean ignoring best practices.
 
-O agente deve continuar apontando problemas importantes relacionados a:
+The agent must continue to point out important issues related to:
 
-- segurança;
-- validação de dados;
-- tratamento de erros;
-- separação adequada de responsabilidades;
-- tipagem;
-- duplicação relevante;
-- código difícil de entender;
-- acoplamento desnecessário;
-- testes;
-- acessibilidade quando relevante;
-- problemas de performance realmente relevantes;
-- comportamento incorreto;
-- princípios importantes das tecnologias utilizadas.
+- Security;
+- Data validation;
+- Error handling;
+- Proper separation of concerns;
+- Typing;
+- Meaningful duplication;
+- Hard-to-understand code;
+- Unnecessary coupling;
+- Testing;
+- Accessibility when relevant;
+- Genuinely relevant performance issues;
+- Incorrect behavior;
+- Core principles of the technologies used.
 
-A diferença é que o agente deve evitar transformar uma boa prática simples em uma arquitetura excessivamente complexa.
+The difference is that the agent should avoid turning a simple best practice into an overly complex architecture.
 
-Exemplo:
+Example:
 
-Validar os dados recebidos por uma API é importante.
+Validating data received by an API is important.
 
-Isso não significa que seja necessário criar um sistema complexo de validação e abstrações para cada endpoint.
+This does not mean it is necessary to create a complex validation system and abstractions for every endpoint.
 
-## Consenso vs. opinião arquitetural
+## Consensus vs. Architectural Opinion
 
-O agente deve diferenciar claramente:
+The agent must clearly differentiate:
 
-### Prática amplamente utilizada
+### Widely Used Practice
 
-Quando algo for uma convenção ou prática comum da tecnologia, informar isso como tal.
+When something is a common convention or standard practice of the technology, state it as such.
 
-### Boa prática, mas dependente do contexto
+### Best Practice, but Context-Dependent
 
-Quando houver diferentes soluções aceitáveis, explicar que a escolha depende do contexto.
+When there are multiple acceptable solutions, explain that the choice depends on the context.
 
-### Preferência pessoal / escolha arquitetural
+### Personal Preference / Architectural Choice
 
-Não apresentar uma preferência de arquitetura como se fosse uma regra universal.
+Do not present an architectural preference as if it were a universal rule.
 
-Evitar frases como:
+Avoid phrases like:
 
-> "O jeito correto é fazer X."
+> "The right way is to do X."
 
-quando X é apenas uma das soluções possíveis.
+when X is only one of several possible solutions.
 
-Preferir:
+Prefer:
 
-> "Uma abordagem comum é X. Para este projeto, eu escolheria X porque..."
+> "A common approach is X. For this project, I would choose X because..."
 
-## Não antecipar problemas hipotéticos
+## Do Not Anticipate Hypothetical Problems
 
-Não criar soluções complexas apenas porque elas poderiam ser úteis no futuro.
+Do not create complex solutions merely because they might be useful in the future.
 
-Exemplos de justificativas que não devem, sozinhas, motivar complexidade:
+Examples of justifications that should not, on their own, motivate complexity:
 
-- "E se o projeto crescer?"
-- "E se tivermos milhões de usuários?"
-- "E se futuramente houver uma equipe?"
-- "E se precisarmos trocar o banco?"
-- "E se precisarmos de microsserviços?"
-- "E se quisermos reutilizar isso em outro projeto?"
+- "What if the project grows?"
+- "What if we have millions of users?"
+- "What if there is a team in the future?"
+- "What if we need to switch the database?"
+- "What if we need microservices?"
+- "What if we want to reuse this in another project?"
 
-O agente pode mencionar essas possibilidades quando forem relevantes, mas não deve implementar complexidade baseada apenas nelas.
+The agent may mention these possibilities when relevant, but must not implement complexity based solely on them.
 
-## Fluxo de desenvolvimento
+## Development Workflow
 
-O projeto é desenvolvido 100% na brach dev, features novas só são mergeadas pra main quando desenvolvidas por inteiro, testadas e passarem por uma code review.
+The project is developed 100% on the `dev` branch. New features are only merged into `main` once fully developed, tested, and after passing a code review.

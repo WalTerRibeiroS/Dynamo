@@ -1,5 +1,5 @@
-import { DatabaseError } from "pg"
-import type { PgErrorMap, PgErrorCode } from "../../../types/pgError.js"
+import { DatabaseError } from 'pg'
+import type { PgErrorMap, PgErrorCode } from '../../../types/pgError.js'
 
 function isDatabaseError(error: unknown): error is DatabaseError {
   return error instanceof DatabaseError
@@ -11,20 +11,16 @@ const PG_ERROR_CODES = new Set<PgErrorCode>(['23505', '23503', '23514'])
 
 function isPgErrorCode(code: string): code is PgErrorCode {
   return PG_ERROR_CODES.has(code as PgErrorCode)
-} 
+}
 //mesma coisa que isDatabaseError, serve pra fazer type narrowing quando for true
 //safe usar `as` aqui pq o has é quem valida o tipo
 //continua retornando um boolean
 
 export function mapPgError(error: unknown, map: PgErrorMap): never {
-  if (
-    isDatabaseError(error) && 
-    error.code && 
-    isPgErrorCode(error.code)
-  ) {
+  if (isDatabaseError(error) && error.code && isPgErrorCode(error.code)) {
     const handler = map[error.code]
 
-    if(handler) {
+    if (handler) {
       throw handler(error)
     }
   }

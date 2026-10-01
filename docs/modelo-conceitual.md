@@ -1,4 +1,3 @@
-
 ## Visão geral
 
 ```
@@ -9,8 +8,6 @@ Workspace  1 ───── 0..20 Domain
 Domain     1 ───── 0..N  Content
 
 Domain     1 ───── 0..N  Note
-
-Domain     1 ───── 0..100 Flashcard
 ```
 
 ## Relacionamentos (linha e flecha)
@@ -67,4 +64,3 @@ User
 ├── Configurações
 └── Workspaces
 ```
-
