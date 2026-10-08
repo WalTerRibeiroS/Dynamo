@@ -28,6 +28,51 @@ describe('auth.register.repository (integração)', () => {
     })
   })
 
+  describe('usernameExists', () => {
+    it('retorna false quando não existe usuário com esse username', async () => {
+      const exists = await repository.usernameExists('ninguem')
+
+      expect(exists).toBe(false)
+    })
+
+    it('retorna true depois que o usuário é criado com esse username', async () => {
+      await repository.createUser({
+        id: uuidv7(),
+        username: 'walter',
+        email: 'walter@email.com',
+        passwordHash: 'hash-fake',
+        refreshTokenHash: 'refresh-hash-fake',
+      })
+
+      const exists = await repository.usernameExists('walter')
+
+      expect(exists).toBe(true)
+    })
+  })
+
+  it('mapeia username duplicado como DUPLICATE_FIELD do campo username', async () => {
+    await repository.createUser({
+      id: uuidv7(),
+      username: 'walter',
+      email: 'walter@email.com',
+      passwordHash: 'hash-fake',
+      refreshTokenHash: 'refresh-hash-fake',
+    })
+
+    await expect(
+      repository.createUser({
+        id: uuidv7(),
+        username: 'walter',
+        email: 'outro@email.com',
+        passwordHash: 'hash-fake',
+        refreshTokenHash: 'refresh-hash-fake',
+      }),
+    ).rejects.toMatchObject({
+        code: 'DUPLICATE_FIELD',
+        publicDetails: { field: 'username' },
+      })
+  })
+
   describe('createUser', () => {
     it('insere o usuário e retorna apenas id e username', async () => {
       const id = uuidv7()
@@ -65,7 +110,10 @@ describe('auth.register.repository (integração)', () => {
           passwordHash: 'hash-fake',
           refreshTokenHash: 'refresh-hash-fake',
         }),
-      ).rejects.toMatchObject({ code: 'DUPLICATE_FIELD' })
+      ).rejects.toMatchObject({
+          code: 'DUPLICATE_FIELD',
+          publicDetails: { field: 'email' },
+        })
     })
   })
 })

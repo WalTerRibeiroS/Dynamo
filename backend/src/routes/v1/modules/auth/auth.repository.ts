@@ -7,7 +7,7 @@ import type { CreatedUser, CreateUserInput, UserPasswordId } from '../../../../t
 //fiz dessa maneira pq o objetivo dessa funcao é apenas verificar se o email/username existe ou n no db
 //como username e email tem a constraind UNIQUE ou existe 1 ou n
 export const emailExists = async (email: string): Promise<boolean> => {
-  const res = await pool.query(
+  const res = await pool.query<boolean>(
     `SELECT 1 
      FROM users 
      WHERE email = $1`,

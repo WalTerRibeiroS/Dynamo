@@ -1,6 +1,9 @@
-export type CreatedUser = {
+export type UserData = {
   id: string
   username: string
+  email: string
+  theme: 'light' | 'dark' | 'system'
+  createdAt: string
 }
 
 export type CreateUserInput = {
@@ -12,3 +15,4 @@ export type CreateUserInput = {
 }
 
 export type UserPasswordId = Pick<CreateUserInput, 'id' | 'passwordHash'>
+export type CreatedUser = Pick<CreateUserInput, 'id' | 'username'>

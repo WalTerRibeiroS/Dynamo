@@ -5,7 +5,7 @@ import { uuidv7 } from 'uuidv7'
 import { ValidationError } from '../../../../utils/errors.js'
 import { UnauthorizedError } from '../../../../utils/errors.js'
 import { issueAuthTokens, createHashToken } from './auth.tokens.js'
-import { verifyRefreshToken } from './auth.cookie.js'
+import { verifyRefreshToken } from './auth.tokens.js'
 
 import type { RegisterUserInput } from './schemas/auth.register.schema.js'
 import type { LoginUserInput } from './schemas/auth.login.schema.js'

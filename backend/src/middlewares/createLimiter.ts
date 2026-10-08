@@ -41,7 +41,7 @@ export function createLimiter({ windowMs, limit }: LimiterConfig) {
     standardHeaders: true,
     legacyHeaders: false,
 
-    handler: (req: Request & { rateLimit?: RateLimitInfo }, _, next: NextFunction) => {
+    handler: (req: Request & { rateLimit?: RateLimitInfo }, _res, next: NextFunction) => {
       const resetTime = req.rateLimit?.resetTime
 
       const retryAfterSeconds = resetTime

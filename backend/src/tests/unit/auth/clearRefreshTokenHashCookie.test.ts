@@ -3,7 +3,6 @@ import type { Response } from 'express'
 import {
   clearRefreshTokenHashCookie,
   REFRESH_COOKIE_NAME,
-  setRefreshTokenCookie,
 } from '../../../routes/v1/modules/auth/auth.cookie.js'
 
 describe('clearRefreshTokenHashCookie', () => {

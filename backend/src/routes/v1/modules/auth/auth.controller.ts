@@ -1,4 +1,4 @@
-import baseLogger from '../../../../utils/logger.js'
+//import baseLogger from '../../../../utils/logger.js'
 import { asyncHandler } from '../../../../utils/asyncHandler.js'
 import { sendSuccess } from '../../../../utils/sendSuccess.js'
 import {
@@ -11,7 +11,7 @@ import type { Request, Response } from 'express'
 import type { RegisterUserInput } from './schemas/auth.register.schema.js'
 import type { LoginUserInput } from './schemas/auth.login.schema.js'
 
-import * as service from '../auth/auth.service.js'
+import * as service from './auth.service.js'
 
 //const logger = baseLogger.child({ layer: "controller"})
 
@@ -48,24 +48,28 @@ export const login = asyncHandler(
   },
 )
 
-export const refresh = asyncHandler(async (req: Request, res: Response) => {
-  const cookieRefreshToken: unknown = req.cookies?.[REFRESH_COOKIE_NAME]
+export const refresh = asyncHandler(
+  async (req: Request, res: Response) => {
+    const cookieRefreshToken: unknown = req.cookies?.[REFRESH_COOKIE_NAME]
 
-  const { accessToken, refreshToken } = await service.refreshSession(cookieRefreshToken)
+    const { accessToken, refreshToken } = await service.refreshSession(cookieRefreshToken)
 
-  setRefreshTokenCookie(res, refreshToken)
+    setRefreshTokenCookie(res, refreshToken)
 
-  return sendSuccess(res, {
-    data: accessToken,
-  })
-})
+    return sendSuccess(res, {
+      data: accessToken,
+    })
+  }
+)
 
-export const logout = asyncHandler(async (req: Request, res: Response) => {
-  const cookieRefreshToken: unknown = req.cookies?.[REFRESH_COOKIE_NAME]
+export const logout = asyncHandler(
+  async (req: Request, res: Response) => {
+    const cookieRefreshToken: unknown = req.cookies?.[REFRESH_COOKIE_NAME]
 
-  await service.logoutUser(cookieRefreshToken)
+    await service.logoutUser(cookieRefreshToken)
 
-  clearRefreshTokenHashCookie(res)
+    clearRefreshTokenHashCookie(res)
 
-  res.sendStatus(204)
-})
+    res.sendStatus(204)
+  }
+)

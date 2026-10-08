@@ -4,6 +4,17 @@ import app from '../../../app.js'
 import * as repository from '../../../routes/v1/modules/auth/auth.repository.js'
 import { uuidv7 } from 'uuidv7'
 import { resetDatabase } from '../../resetDatabase.js'
+import { REFRESH_COOKIE_NAME } from '../../../routes/v1/modules/auth/auth.cookie.js'
+
+const getRefreshCookie = (response: request.Response) => {
+  const cookie = response
+    .get('Set-Cookie')
+    ?.find((value) => value.startsWith(`${REFRESH_COOKIE_NAME}=`))
+
+  if (!cookie) throw new Error("Cookie refreshToken não veio na resposta")
+
+  return cookie.split(';')[0]
+}
 
 describe('POST /api/v1/auth/register (integração)', () => {
   beforeEach(async () => {
@@ -38,14 +49,42 @@ describe('POST /api/v1/auth/register (integração)', () => {
     expect(cookies?.[0]).toMatch(/HttpOnly/i)
   })
 
-  //teste para verificar se o schema do zod esta funcionando
-  it('retorna erro de validação quando o email é malformado', async () => {
+  it("emite uma sessão que pode ser renovada", async() => {
+    const response = await request(app)
+      .post("/api/v1/auth/register")
+      .send(validPayload)
+      .expect(201)
+
+    const refreshCookie = getRefreshCookie(response)
+    
+    await request(app)
+      .post("/api/v1/auth/refresh")
+      .set("Cookie", refreshCookie)
+      .expect(200)
+  })
+
+  // teste para verificar se o schema do zod esta funcionando
+  // e o adapter e tals
+  it('retorna o contrato de erro de validação quando o email é malformado', async () => {
     const response = await request(app)
       .post('/api/v1/auth/register')
       .send({ ...validPayload, email: 'não-é-email' })
 
     expect(response.status).toBe(422)
-    expect(response.body.success).toBe(false)
+
+    expect(response.body).toEqual({
+      success: false,
+      status: 'fail',
+      code: 'VALIDATION_ERROR',
+      message: 'Dados inválidos',
+      issues: [
+        {
+          field: 'email',
+          message: 'E-mail inválido',
+          code: 'CUSTOM_VALIDATION',
+        },
+      ],
+    })
   })
 
   //teste real com o banco de dados para ver como o service responde

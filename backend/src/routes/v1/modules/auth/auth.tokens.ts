@@ -2,6 +2,10 @@ import jwt from 'jsonwebtoken'
 import { createHash } from 'node:crypto'
 import { ENV } from '../../../../config/env.js'
 import { randomUUID } from 'node:crypto'
+import { z } from 'zod'
+import { UnauthorizedError } from '../../../../utils/errors.js'
+
+import type { JwtPayload } from 'jsonwebtoken'
 
 type AuthTokens = {
   accessToken: string
@@ -23,4 +27,26 @@ export function issueAuthTokens(userId: string): AuthTokens {
   const refreshTokenHash = createHashToken(refreshToken)
 
   return { accessToken, refreshToken, refreshTokenHash }
+}
+
+export const refreshTokenPayloadSchema = z.object({
+  id: z.uuid({ version: 'v7' }),
+})
+
+export function verifyRefreshToken(token: string): string {
+  let payload: string | JwtPayload
+
+  try {
+    payload = jwt.verify(token, ENV.REFRESH_TOKEN, { algorithms: ['HS256'] })
+  } catch {
+    throw new UnauthorizedError('refresh token inválido')
+  }
+
+  const parsedPayload = refreshTokenPayloadSchema.safeParse(payload)
+
+  if (!parsedPayload.success) {
+    throw new UnauthorizedError('payload do refresh token inválido')
+  }
+
+  return parsedPayload.data.id
 }

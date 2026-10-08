@@ -25,12 +25,14 @@ const refreshWith = (token: string) =>
 describe('POST /api/v1/auth/logout (integração)', () => {
   const userId = uuidv7()
   let refreshToken: string
+  let refreshTokenHash: string
 
   beforeEach(async () => {
     await resetDatabase()
 
     const tokens = issueAuthTokens(userId)
     refreshToken = tokens.refreshToken
+    refreshTokenHash = tokens.refreshTokenHash
 
     await repository.createUser({
       id: userId,
@@ -41,7 +43,7 @@ describe('POST /api/v1/auth/logout (integração)', () => {
     })
   })
 
-  it('apaga o cookie caso o token seja vaĺido', async () => {
+  it('apaga o cookie o tokenHash no banco caso o token seja vaĺido', async () => {
     const response = await refreshWith(refreshToken)
 
     expect(response.status).toBe(204)
@@ -51,9 +53,11 @@ describe('POST /api/v1/auth/logout (integração)', () => {
     expect(raw).toMatch(/HttpOnly/i)
     expect(raw).toContain('Path=/api/v1/auth')
     expect(value).toBe('')
+
+    expect(await repository.getRefreshTokenHashById(userId)).toBeNull()
   })
 
-  it('apaga o cookie mesmo se o token seja inválido', async () => {
+  it('apaga o cookie mesmo se o token seja inválido, mas não o do banco', async () => {
     const response = await refreshWith('qualque-token')
 
     expect(response.status).toBe(204)
@@ -63,9 +67,11 @@ describe('POST /api/v1/auth/logout (integração)', () => {
     expect(raw).toMatch(/HttpOnly/i)
     expect(raw).toContain('Path=/api/v1/auth')
     expect(value).toBe('')
+
+    expect(await repository.getRefreshTokenHashById(userId)).toBe(refreshTokenHash)
   })
 
-  it('apaga o cookie quando o token não é fornecido', async () => {
+  it('apaga o cookie quando o token não é fornecido, mas não o do banco', async () => {
     const response = await refreshWith('')
 
     expect(response.status).toBe(204)
@@ -75,5 +81,7 @@ describe('POST /api/v1/auth/logout (integração)', () => {
     expect(raw).toMatch(/HttpOnly/i)
     expect(raw).toContain('Path=/api/v1/auth')
     expect(value).toBe('')
+
+    expect(await repository.getRefreshTokenHashById(userId)).toBe(refreshTokenHash)
   })
 })
