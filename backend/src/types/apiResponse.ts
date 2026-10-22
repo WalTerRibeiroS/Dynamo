@@ -3,7 +3,7 @@ import type { Issue } from './issue.js'
 export type ApiSuccess<T> = {
   success: true
   status: 'success'
-  data: T
+  data?: T
   message?: string
 }
 

@@ -11,9 +11,9 @@ const getRefreshCookie = (response: request.Response) => {
     .get('Set-Cookie')
     ?.find((value) => value.startsWith(`${REFRESH_COOKIE_NAME}=`))
 
-  if (!cookie) throw new Error("Cookie refreshToken não veio na resposta")
+  if (!cookie) throw new Error('Cookie refreshToken não veio na resposta')
 
-  return cookie.split(';')[0]
+  return cookie.split(';')[0] ?? cookie
 }
 
 describe('POST /api/v1/auth/register (integração)', () => {
@@ -31,13 +31,13 @@ describe('POST /api/v1/auth/register (integração)', () => {
     const response = await request(app).post('/api/v1/auth/register').send(validPayload)
 
     expect(response.status).toBe(201)
-    expect(response.body.data.createdUser).toMatchObject({
+    expect(response.body.data.user).toMatchObject({
       id: expect.any(String),
       username: 'walter123',
       accessToken: expect.any(String),
     })
-    expect(response.body.data.createdUser).not.toHaveProperty('password_hash')
-    expect(response.body.data.createdUser).not.toHaveProperty('refresh_token_hash')
+    expect(response.body.data.user).not.toHaveProperty('password_hash')
+    expect(response.body.data.user).not.toHaveProperty('refresh_token_hash')
   })
 
   it('seta o cookie httpOnly de refreshToken', async () => {
@@ -49,18 +49,12 @@ describe('POST /api/v1/auth/register (integração)', () => {
     expect(cookies?.[0]).toMatch(/HttpOnly/i)
   })
 
-  it("emite uma sessão que pode ser renovada", async() => {
-    const response = await request(app)
-      .post("/api/v1/auth/register")
-      .send(validPayload)
-      .expect(201)
+  it('emite uma sessão que pode ser renovada', async () => {
+    const response = await request(app).post('/api/v1/auth/register').send(validPayload).expect(201)
 
     const refreshCookie = getRefreshCookie(response)
-    
-    await request(app)
-      .post("/api/v1/auth/refresh")
-      .set("Cookie", refreshCookie)
-      .expect(200)
+
+    await request(app).post('/api/v1/auth/refresh').set('Cookie', refreshCookie).expect(200)
   })
 
   // teste para verificar se o schema do zod esta funcionando

@@ -4,7 +4,7 @@ import { ValidationError } from '../utils/errors.js'
 import { formatZodError } from '../utils/zodAdapter.js'
 
 export function validateBody(schema: z.ZodType) {
-  return (req: Request, res: Response, next: NextFunction) => {
+  return (req: Request, _res: Response, next: NextFunction) => {
     const result = schema.safeParse(req.body)
 
     if (!result.success) {

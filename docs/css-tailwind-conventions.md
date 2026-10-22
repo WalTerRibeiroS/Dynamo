@@ -22,7 +22,7 @@
 - Reuse existing custom properties and shared values (like `@theme` or `:root`) before introducing new ones.
 - Prefer low-specificity class selectors and avoid `!` or `!important`.
 - Use flexible layout primitives such as Grid and Flexbox instead of fixed positioning for page structure.
-- **[IGNORE THIS ONE]** Design mobile-first where practical and verify that layouts remain usable at narrow and wide viewport sizes.
+- Design mobile-first where practical and verify that layouts remain usable at narrow and wide viewport sizes.
 - Use relative units for scalable typography and spacing while retaining pixels where they are appropriate for borders or small fixed details.
 - Provide visible `:focus-visible` styles for interactive controls and do not remove browser focus indicators without an accessible replacement.
 - Ensure hover-only information is also available to keyboard and touch users, prefer the component's semantic state (such as aria-expanded) when visibility depends on actual component state rather than styling alone.

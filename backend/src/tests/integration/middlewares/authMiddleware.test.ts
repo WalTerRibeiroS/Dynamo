@@ -1,14 +1,12 @@
 import express from 'express'
 import request from 'supertest'
 import { describe, expect, it } from 'vitest'
-import { authMiddleware } from "../../../middlewares/authMiddleware.js"
-import errorMiddleware from "../../../middlewares/error.js"
-
-import type {  } from "express"
- 
-
-import { issueAuthTokens } from "../../../routes/v1/modules/auth/auth.tokens.js"
-import { uuidv7 } from "uuidv7"
+import jwt from 'jsonwebtoken'
+import { uuidv7 } from 'uuidv7'
+import { ENV } from '../../../config/env.js'
+import { authMiddleware } from '../../../middlewares/authMiddleware.js'
+import errorMiddleware from '../../../middlewares/error.js'
+import { issueAuthTokens } from '../../../routes/v1/modules/auth/auth.tokens.js'
 
 function createAppThatRequeireAuth() {
   const app = express()
@@ -25,7 +23,7 @@ function createAppThatRequeireAuth() {
 describe("authMiddleware", () => {
 
   const id = uuidv7()
-  const { accessToken: token } = issueAuthTokens(id)
+  const { accessToken: token, refreshToken } = issueAuthTokens(id)
 
   it("permite requisição com token válido", async() => {
     const app = createAppThatRequeireAuth()
@@ -57,10 +55,6 @@ describe("authMiddleware", () => {
     expect(response.status).toBe(401)
   })
 
-  // TS é muito chato e n me deixou testar caso o header seja
-  // qualquer valor, por isso n tem teste disso, 
-  // responsavel por isso é esse IncomingHttpHeaders type
-
   it("não permite requisição com valor no header Bearer inválido", async() => {
     const app = createAppThatRequeireAuth()
 
@@ -79,6 +73,42 @@ describe("authMiddleware", () => {
     const response = await request(app)
       .get("/protect")
       .set("Authorization", `Bearer ${tokenInvalido}`)
+
+    expect(response.status).toBe(401)
+  })
+
+  it("não permite requisição com token expirado", async () => {
+    const expiredToken = jwt.sign(
+      { id },
+      ENV.ACCESS_TOKEN,
+      { algorithm: 'HS256', expiresIn: -1 },
+    )
+
+    const app = createAppThatRequeireAuth()
+
+    const response = await request(app)
+      .get("/protect")
+      .set("Authorization", `Bearer ${expiredToken}`)
+
+    expect(response.status).toBe(401)
+  })
+
+  it("não permite requisição com esquema diferente de Bearer", async () => {
+    const app = createAppThatRequeireAuth()
+
+    const response = await request(app)
+      .get("/protect")
+      .set("Authorization", "Basic dXNlcjpwYXNz")
+
+    expect(response.status).toBe(401)
+  })
+
+  it("não permite usar um Refresh Token como Access Token", async () => {
+    const app = createAppThatRequeireAuth()
+
+    const response = await request(app)
+      .get("/protect")
+      .set("Authorization", `Bearer ${refreshToken}`)
 
     expect(response.status).toBe(401)
   })

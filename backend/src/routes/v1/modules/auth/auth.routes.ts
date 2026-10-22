@@ -9,8 +9,11 @@ import * as controller from './auth.controller.js'
 const router = Router()
 
 router.post('/register', validateBody(registerUserSchema), controller.register)
+
 router.post('/login', validateBody(loginUserSchema), controller.login)
+
 router.post('/refresh', controller.refresh)
+
 router.post('/logout', controller.logout)
 
 export default router

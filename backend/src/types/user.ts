@@ -1,9 +1,15 @@
+export type updateSettingsInput = {
+  theme: 'light' | 'dark' | 'system'
+}
+
+export type UserTheme = 'light' | 'dark' | 'system'
+
 export type UserData = {
   id: string
   username: string
   email: string
-  theme: 'light' | 'dark' | 'system'
-  createdAt: string
+  theme: UserTheme
+  createdAt: Date
 }
 
 export type CreateUserInput = {

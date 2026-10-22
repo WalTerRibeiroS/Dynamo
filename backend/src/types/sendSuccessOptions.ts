@@ -1,5 +1,5 @@
 export type SendSuccessOptions<T> = {
   statusCode?: number
-  data: T
+  data?: T
   message?: string
 }

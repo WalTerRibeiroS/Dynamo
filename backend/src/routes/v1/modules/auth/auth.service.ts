@@ -10,13 +10,23 @@ import { verifyRefreshToken } from './auth.tokens.js'
 import type { RegisterUserInput } from './schemas/auth.register.schema.js'
 import type { LoginUserInput } from './schemas/auth.login.schema.js'
 import type { Issue } from '../../../../types/issue.js'
-import type { CreateUserInput } from '../../../../types/user.js'
+import type { CreatedUser, CreateUserInput } from '../../../../types/user.js'
 
 import * as repository from '../auth/auth.repository.js'
 
 //const logger = baseLogger.child({ layer: "service"})
 
-export const registerUser = async (userData: RegisterUserInput) => {
+type RegisterUserResult = {
+  user: CreatedUser & { accessToken: string }
+  refreshToken: string
+}
+
+type SessionTokens = {
+  accessToken: string
+  refreshToken: string
+}
+
+export const registerUser = async (userData: RegisterUserInput): Promise<RegisterUserResult> => {
   const issues: Issue[] = []
 
   const { username, email, password } = userData
@@ -66,7 +76,7 @@ export const registerUser = async (userData: RegisterUserInput) => {
   return { user, refreshToken }
 }
 
-export const loginUser = async (userData: LoginUserInput) => {
+export const loginUser = async (userData: LoginUserInput): Promise<SessionTokens> => {
   const { email, password } = userData
 
   const user = await repository.getUserByEmail(email)
@@ -104,7 +114,7 @@ export const loginUser = async (userData: LoginUserInput) => {
   return { accessToken, refreshToken }
 }
 
-export const refreshSession = async (token: unknown) => {
+export const refreshSession = async (token: unknown): Promise<SessionTokens> => {
   if (typeof token !== 'string' || token.length === 0) {
     throw new UnauthorizedError('Refresh token válido ausente')
   }
@@ -123,7 +133,7 @@ export const refreshSession = async (token: unknown) => {
   return { accessToken, refreshToken }
 }
 
-export const logoutUser = async (token: unknown) => {
+export const logoutUser = async (token: unknown): Promise<void> => {
   // Não lanço erro aqui pq indeferente de ser ou n ser um token válido
   // eu apago ele do navegador
   if (typeof token !== 'string' || token.length === 0) return

@@ -46,7 +46,7 @@ describe('POST /api/v1/auth/refresh (integração)', () => {
 
     expect(response.status).toBe(200)
     expect(response.body.success).toBe(true)
-    expect(response.body.data).toEqual(expect.any(String))
+    expect(response.body.data.token).toEqual(expect.any(String))
 
     const { raw, value: newRefreshToken } = getSetCookie(response, REFRESH_COOKIE_NAME)
 

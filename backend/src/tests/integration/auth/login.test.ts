@@ -12,9 +12,9 @@ const getRefreshCookie = (response: request.Response) => {
     .get('Set-Cookie')
     ?.find((value) => value.startsWith(`${REFRESH_COOKIE_NAME}=`))
 
-  if (!cookie) throw new Error("Cookie refreshToken não veio na resposta")
+  if (!cookie) throw new Error('Cookie refreshToken não veio na resposta')
 
-  return cookie.split(';')[0]
+  return cookie.split(';')[0] ?? cookie
 }
 
 describe('POST /api/v1/auth/login (integração)', () => {
@@ -38,21 +38,17 @@ describe('POST /api/v1/auth/login (integração)', () => {
   })
 
   it('gera os tokens de acesso e refresh e retorna 200 junto com o accessToken', async () => {
-    const response = await request(app)
-      .post('/api/v1/auth/login')
-      .send(validPayload)
+    const response = await request(app).post('/api/v1/auth/login').send(validPayload)
 
     expect(response.status).toBe(200)
 
     expect(response.body.success).toBe(true)
 
-    expect(response.body.data).toEqual(expect.any(String))
+    expect(response.body.data.token).toEqual(expect.any(String))
   })
 
   it('seta o cookie httpOnly de refreshToken', async () => {
-    const response = await request(app)
-      .post('/api/v1/auth/login')
-      .send(validPayload)
+    const response = await request(app).post('/api/v1/auth/login').send(validPayload)
 
     const cookies = response.headers['set-cookie']
     expect(cookies).toBeDefined()
@@ -62,18 +58,12 @@ describe('POST /api/v1/auth/login (integração)', () => {
     expect(cookies?.[0]).toMatch(/HttpOnly/i)
   })
 
-  it("emite uma sessão que pode ser renovada", async() => {
-    const response = await request(app)
-      .post("/api/v1/auth/login")
-      .send(validPayload)
-      .expect(200)
+  it('emite uma sessão que pode ser renovada', async () => {
+    const response = await request(app).post('/api/v1/auth/login').send(validPayload).expect(200)
 
     const refreshCookie = getRefreshCookie(response)
-    
-    await request(app)
-      .post("/api/v1/auth/refresh")
-      .set("Cookie", refreshCookie)
-      .expect(200)
+
+    await request(app).post('/api/v1/auth/refresh').set('Cookie', refreshCookie).expect(200)
   })
 
   it('retorna erro quando o email não existe', async () => {

@@ -14,6 +14,7 @@ export type DomainCode =
   | 'EMAIL_ALREADY_EXISTS'
   | 'USERNAME_ALREADY_EXISTS'
   | 'INVALID_CREDENCIALS'
+  | 'PASSWORD_DUPLICATION'
 
 export type Issue = {
   message: string

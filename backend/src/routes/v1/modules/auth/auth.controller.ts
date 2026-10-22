@@ -30,7 +30,7 @@ export const register = asyncHandler(
     return sendSuccess(res, {
       statusCode: 201,
       data: {
-        createdUser: user,
+        user: user,
       },
     })
   },
@@ -43,7 +43,9 @@ export const login = asyncHandler(
     setRefreshTokenCookie(res, refreshToken)
 
     return sendSuccess(res, {
-      data: accessToken,
+      data: {
+        token: accessToken
+      }
     })
   },
 )
@@ -57,7 +59,9 @@ export const refresh = asyncHandler(
     setRefreshTokenCookie(res, refreshToken)
 
     return sendSuccess(res, {
-      data: accessToken,
+      data: {
+        token: accessToken
+      }
     })
   }
 )

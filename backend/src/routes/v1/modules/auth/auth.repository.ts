@@ -7,25 +7,29 @@ import type { CreatedUser, CreateUserInput, UserPasswordId } from '../../../../t
 //fiz dessa maneira pq o objetivo dessa funcao é apenas verificar se o email/username existe ou n no db
 //como username e email tem a constraind UNIQUE ou existe 1 ou n
 export const emailExists = async (email: string): Promise<boolean> => {
-  const res = await pool.query<boolean>(
-    `SELECT 1 
-     FROM users 
-     WHERE email = $1`,
+  const { rows } = await pool.query<{ '?column?': number }>(
+    `
+    SELECT 1 
+    FROM users 
+    WHERE email = $1
+    `,
     [email],
   )
 
-  return res.rows.length > 0
+  return rows.length > 0
 }
 
 export const usernameExists = async (username: string): Promise<boolean> => {
-  const res = await pool.query(
-    `SELECT 1 
-     FROM users 
-     WHERE username = $1`,
+  const { rows } = await pool.query<{ '?column?': number }>(
+    `
+    SELECT 1 
+    FROM users 
+    WHERE username = $1
+    `,
     [username],
   )
 
-  return res.rows.length > 0
+  return rows.length > 0
 }
 
 export const createUser = async ({
@@ -36,7 +40,7 @@ export const createUser = async ({
   refreshTokenHash,
 }: CreateUserInput): Promise<CreatedUser> => {
   try {
-    const res = await pool.query<CreatedUser>(
+    const { rows } = await pool.query<CreatedUser>(
       `
       INSERT INTO users
         (
@@ -52,7 +56,12 @@ export const createUser = async ({
       [id, username, email, passwordHash, refreshTokenHash],
     )
 
-    return res.rows[0]
+    const createdUser = rows[0]
+    if (!createdUser) {
+      throw new Error('A criação do usuário não retornou os dados esperados')
+    }
+
+    return createdUser
   } catch (error) {
     mapPgError(error, {
       '23505': (e) => {
@@ -69,14 +78,18 @@ export const createUser = async ({
 }
 
 export const getUserByEmail = async (email: string): Promise<UserPasswordId | undefined> => {
-  const res = await pool.query(
-    `SELECT id, password_hash AS "passwordHash" 
-     FROM users 
-     WHERE email = $1`,
+  const { rows } = await pool.query<UserPasswordId>(
+    `
+    SELECT 
+      id, 
+      password_hash AS "passwordHash" 
+    FROM users 
+    WHERE email = $1
+    `,
     [email],
   )
 
-  return res.rows[0]
+  return rows[0]
 }
 
 // password_hash AS "passwordHash"
@@ -84,25 +97,29 @@ export const getUserByEmail = async (email: string): Promise<UserPasswordId | un
 
 export const saveNewRefreshToken = async (refreshTokenHash: string, id: string): Promise<void> => {
   await pool.query(
-    `UPDATE users 
-     SET 
+    `
+    UPDATE users 
+    SET 
       refresh_token_hash = $1, 
       updated_at = CURRENT_TIMESTAMP 
-     WHERE id = $2`,
+    WHERE id = $2
+    `,
     [refreshTokenHash, id],
   )
 }
 
 // usada em testes
 export const getRefreshTokenHashById = async (userId: string): Promise<string | undefined> => {
-  const res = await pool.query(
-    `SELECT refresh_token_hash AS "refreshTokenHash" 
-     FROM users 
-     WHERE id = $1`,
+  const { rows } = await pool.query<{ refreshTokenHash: string }>(
+    `
+    SELECT refresh_token_hash AS "refreshTokenHash" 
+    FROM users 
+    WHERE id = $1
+    `,
     [userId],
   )
 
-  return res.rows[0]?.refreshTokenHash
+  return rows[0]?.refreshTokenHash
 }
 
 export const rotateRefreshTokenHash = async (
@@ -110,25 +127,29 @@ export const rotateRefreshTokenHash = async (
   oldHash: string,
   newHash: string,
 ): Promise<boolean> => {
-  const res = await pool.query(
-    `UPDATE users
-     SET
+  const { rowCount } = await pool.query(
+    `
+    UPDATE users
+    SET
       refresh_token_hash = $1,
       updated_at = CURRENT_TIMESTAMP
-     WHERE id = $2 AND refresh_token_hash = $3`,
+    WHERE id = $2 AND refresh_token_hash = $3
+    `,
     [newHash, userId, oldHash],
   )
 
-  return res.rowCount === 1
+  return rowCount === 1
 }
 
 export const clearRefreshTokenHash = async (userId: string, tokenHash: string): Promise<void> => {
   await pool.query(
-    `UPDATE users
-     SET 
+    `
+    UPDATE users
+    SET 
       refresh_token_hash = NULL, 
       updated_at = CURRENT_TIMESTAMP
-     WHERE id = $1 AND refresh_token_hash = $2`,
+    WHERE id = $1 AND refresh_token_hash = $2
+    `,
     [userId, tokenHash],
   )
 }

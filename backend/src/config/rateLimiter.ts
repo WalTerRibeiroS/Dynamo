@@ -3,3 +3,4 @@ import { createLimiter } from '../middlewares/createLimiter.js'
 export const globalLimiter = createLimiter({ windowMs: 15 * 60 * 1000, limit: 300 })
 export const authLimiter = createLimiter({ windowMs: 15 * 60 * 1000, limit: 10 })
 export const usersLimiter = createLimiter({ windowMs: 15 * 60 * 1000, limit: 100 })
+export const usersSecurityLimiter = createLimiter({ windowMs: 30 * 60 * 1000, limit: 10 })

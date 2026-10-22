@@ -2,9 +2,6 @@ import { describe, it, expect, beforeEach, vi } from 'vitest'
 import * as repository from '../../../routes/v1/modules/auth/auth.repository.js'
 import { issueAuthTokens } from '../../../routes/v1/modules/auth/auth.tokens.js'
 import { logoutUser } from '../../../routes/v1/modules/auth/auth.service.js'
-import { UnauthorizedError } from '../../../utils/errors.js'
-import { log } from 'node:console'
-import { promise } from 'zod'
 
 vi.mock('../../../routes/v1/modules/auth/auth.repository.js')
 
