@@ -8,4 +8,4 @@ export const updateUsernameSchema = z.object({
     .regex(/^[a-zA-Z0-9_-]+$/, 'Username pode conter apenas letras, números, _ ou -'),
 })
 
-export type NewUsername = z.infer<typeof updateUsernameSchema>
+export type NewUsernameInput = z.infer<typeof updateUsernameSchema>

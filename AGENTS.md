@@ -18,7 +18,7 @@ When using TypeScript, read `docs/typescript-conventions.md` before making chang
 Node and Express
 
 #### API Conventions
-When developing or modifying API routes, read docs/api-conventions.md before making changes to the API. Treat the document as the source of truth for project-specific API conventions.
+When developing or modifying API routes, read `docs/api-conventions.md` before making changes to the API. Treat the document as the source of truth for project-specific API conventions.
 
 ### Frontend
 React, React Compiler, and Tailwind CSS
@@ -32,6 +32,8 @@ Refer to files inside `docs/db` when needed to understand how the tables operate
 
 ### Automated Testing
 Vitest, RTL (React Testing Library), Playwright
+
+reference `docs/test-conventions.md` for testing the right things in the correct way
 
 ### Deployment
 Backend and PostgreSQL DB with Railway

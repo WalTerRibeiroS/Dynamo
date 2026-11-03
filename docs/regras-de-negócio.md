@@ -20,6 +20,8 @@ Usuário
 
 O usuário pode ter 5 workspaces no máximo
 
+O sistema deve impedir a criação de um sexto Workspace para o mesmo usuário.
+
 ```
 Usuário
    │
@@ -29,6 +31,11 @@ Usuário
    ├── Workspace D
    └── Workspace E [máximo]
 ```
+
+---
+### RN01.6 — Exclusão da conta remove seus Workspaces
+
+Ao excluir uma conta, todos os Workspaces pertencentes a ela também são removidos.
 
 ---
 ### RN02 — Workspaces são independentes
@@ -47,15 +54,24 @@ São entidades independentes.
 
 ---
 
+### RN02.5 — Nomes de Workspaces são únicos por usuário
+
+Um usuário não pode possuir dois Workspaces com o mesmo nome. Usuários diferentes podem usar o mesmo nome.
+
+---
+
 ### RN03 — O estado visual pertence ao Workspace
 
 O Workspace deve manter:
 
 - posição dos domínios;
-- zoom;
-- estado da câmera/Canvas.
+- zoom, entre `0.50` e `3` inclusive;
+- posição da câmera/Canvas;
+- paleta de cores do Workspace.
 
 E isso deve ser persistido automaticamente.
+
+As paletas disponíveis são `red`, `green`, `blue`, `purple`, `yellow`, `white` e `black`. O padrão inicial é `purple`.
 
 ---
 ### RN03.5 — Exclusão de Workspaces é em cascata
@@ -132,7 +148,9 @@ Workspace B
 ---
 ### RN06.5 — Domínios não podem possuir o mesmo nome em mesmos Workspaces
 
-O nome não pode se repetir dentro de um mesmo Workspace.
+O nome não pode se repetir dentro de um mesmo Workspace, sem diferenciar
+maiúsculas de minúsculas. Ele é limitado a 50 caracteres e não pode ser vazio
+ou conter apenas espaços.
 
 Isso é regra
 
@@ -189,14 +207,16 @@ O usuário precisa confirmar.
 
 ---
 
-### RN10.5 — A criação de um novo domínio exige os dados
+### RN10.5 — Domínio exige nome e pode ter descrição
 
-```
-Domínio
-├── Nome
-├── Icone representando o dominio (escolhido pelo user)
-└── Descrição sobre o que o domínio aborda
-```
+O nome é o único dado obrigatório para criar um domínio. Ele pode ter até 50
+caracteres e não pode ser vazio ou conter apenas espaços. O usuário pode
+informar uma descrição de até 200 caracteres no momento da criação ou deixá-la
+vazia.
+
+Domínios não terão ícone na funcionalidade atual. A tabela atual não terá uma
+coluna de ícone; ela poderá ser adicionada se a funcionalidade entrar no escopo
+futuramente.
 
 ---
 
@@ -218,19 +238,32 @@ não significa necessariamente:
 
 ### RN12 — Relacionamentos podem possuir direção
 
-Pode existir:
-
-```
-A ─────► B
-```
-
-ou:
+Um relacionamento é puramente visual e pode ter um destes tipos:
 
 ```
 A ───── B
+A ─────► B
+A ◄────► B
 ```
 
-A direção é uma característica visual da relação.
+Os tipos são `line`, `arrow` e `bidirectional`. Em `arrow`, a direção vai de
+`source` para `target`. Em `line` e `bidirectional`, a ordem de `source` e
+`target` não altera a renderização.
+
+### RN12.5 — Um par de domínios possui no máximo um relacionamento
+
+Para um mesmo par de domínios, só pode existir um relacionamento, sem
+considerar a ordem dos domínios. Isso também vale para relacionamentos `arrow`:
+uma seta inversa não é outro relacionamento permitido. Para indicar os dois
+sentidos, o relacionamento existente deve ser alterado para `bidirectional`.
+
+Uma tentativa de criar um segundo relacionamento para o par é conflito. O
+backend responde com HTTP `409`; a interface pode oferecer alterar o
+relacionamento existente para bidirecional.
+
+### RN12.6 — Um domínio não pode se relacionar consigo mesmo
+
+`source` e `target` devem ser domínios diferentes.
 
 ---
 
@@ -376,6 +409,8 @@ Workspace → modo edição
 ```
 
 e todos os domínios seguem esse estado.
+
+O modo é persistido por Workspace. Um Workspace novo começa em modo edição.
 
 ---
 

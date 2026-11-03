@@ -109,8 +109,10 @@ Usuário autenticado e apto a utilizar seus Workspaces.
 ```
 
 **Dados necessários para criação:**  
-Nome do workspace  
-Tema  
+Nome do Workspace (até 50 caracteres; único entre os Workspaces do mesmo usuário)
+Paleta de cores (padrão: `purple`)
+
+Cada usuário pode possuir no máximo 5 Workspaces. Usuários diferentes podem usar o mesmo nome.
 
 ---
 
@@ -132,7 +134,9 @@ O estado visual restaurado inclui:
 
 - posição dos domínios;
 - zoom;
-- estado do Canvas.
+- estado do Canvas;
+- paleta de cores;
+- modo de leitura/edição.
 
 ---
 
@@ -168,7 +172,8 @@ O usuário **não precisa executar uma ação de salvamento**.
 ```
 
 **Opções de paleta:**  
-`[A DEFINIR]`
+`red`, `green`, `blue`, `purple`, `yellow`, `white`, `black`
+O padrão para um Workspace novo é `purple`.
 
 ---
 ## UC07.5 — Alterar nome do Workspace
@@ -261,7 +266,7 @@ O usuário pode:
 O sistema salva o novo zoom para proximas vezes apos sair do workspace.
 
 **Limite mínimo/máximo de zoom:**  
-`[A DEFINIR]`
+Mínimo: `0.50` (50%). Máximo: `3` (300%).
 
 ---
 
@@ -283,11 +288,15 @@ O sistema salva o novo zoom para proximas vezes apos sair do workspace.
 
 **Dados do domínio:**
 
-- nome;
-- ícone opcional;
-- posição inicial.
+- nome (obrigatório, até 50 caracteres e sem ficar vazio ou conter apenas espaços);
+- descrição (opcional, até 200 caracteres).
 
-**Posição inicial:** `[A DEFINIR]`
+O sistema define a posição inicial. Como convenção visual, o primeiro domínio
+do Workspace começa em `(0, 0)`. Para os próximos, o backend procura uma
+posição livre para evitar sobreposição. A estratégia de busca ainda será
+definida.
+
+Ícones não fazem parte do escopo atual da criação de domínios.
 
 A criação de domínio é permitida tanto no modo:
 
@@ -350,8 +359,8 @@ Isso é permitido independentemente do modo leitura/edição.
 
 Pode alterar:
 
-- nome;
-- ícone.
+- nome
+- descrição
 
 **Modo necessário:** editar dentro da sidebar com o mode "edicao" selecionado
 
@@ -405,10 +414,17 @@ Nenhum dado é removido.
 1. Usuário abre o menu contextual de um domínio (botao direito).
 2. Seleciona "Criar relacionamento".
 3. Usuário seleciona outro domínio.
-4. Sistema cria uma linha entre os domínios.
+4. Usuário escolhe `line`, `arrow` ou `bidirectional` no menu de tipos.
+5. Sistema cria o relacionamento com o tipo escolhido.
 ```
 
 O relacionamento é **puramente visual**.
+Um domínio não pode ser relacionado consigo mesmo. Só pode existir um
+relacionamento por par de domínios, independentemente da ordem.
+
+Se já existir um relacionamento para o par, a criação retorna conflito HTTP
+`409`. A interface pode oferecer alterar o relacionamento existente para
+`bidirectional`.
 
 ---
 
@@ -418,13 +434,33 @@ O relacionamento é **puramente visual**.
 
 **Objetivo:** criar uma relação visual com direção.
 
+O usuário escolhe `arrow` e seleciona a direção do domínio de origem para o de
+destino.
+
 ### Fluxo
 
 ```
 Domínio A ─────────► Domínio B
 ```
 
-A seta não possui significado semântico obrigatório.
+A seta não possui significado semântico obrigatório. O domínio de origem é
+`source` e o de destino é `target`; inverter a direção significa trocar esses
+domínios no relacionamento existente.
+
+---
+
+## UC17.5 — Criar relacionamento bidirecional
+
+**Ator:** Usuário
+
+**Objetivo:** representar visualmente uma relação com os dois sentidos.
+
+```
+Domínio A ◄────────► Domínio B
+```
+
+Esse tipo pode ser escolhido ao criar o relacionamento ou ao alterar um
+relacionamento existente entre o mesmo par de domínios.
 
 ---
 
@@ -452,6 +488,8 @@ A seta não possui significado semântico obrigatório.
 **Objetivo:** controlar as operações disponíveis dentro das sessões dos domínios.
 
 O estado é global ao Workspace.
+
+O modo é persistido ao alternar entre Workspaces. Um Workspace novo começa em modo edição.
 
 ```
 Workspace
@@ -855,7 +893,8 @@ Depois de transformar suas ideias em casos de uso, apareceram algumas lacunas qu
 ### Domínio
 
 - Renomear domínio — **já definido como possível**
-- Alterar ícone — **já definido como possível**
+- Descrição do domínio — opcional na criação; comportamento de edição ainda não especificado
+- Ícone — fora do escopo atual e sem coluna na tabela atual
 - Remover relacionamento — `[A DEFINIR]`
 
 ### Conteúdo

@@ -1,106 +1,101 @@
 # API Conventions
 
-Source of truth for API architecture, module structure, validation, layer responsibilities, and response formats. Existing code is an example, not an override of these rules.
+This document is the source of truth for API structure, request handling, error responses, and success response formats. Existing code is an example, not an override of these conventions.
 
-## Structure
+## Module structure and request flow
 
-- Organize APIs by domain under `src/routes/v1/modules/<module>/`.
-- Keep the flow unidirectional: `Request → Routes + Zod validation → Controller → Service → Repository (when DB is needed)`.
-- Mount every module in `src/routes/v1/index.ts` under its domain prefix. Module route paths are relative to that prefix; `router.get("/", ...)` in `health.routes.ts`, mounted with `v1.use("/health", ...)`, creates `GET /v1/health`.
-- Import controllers as a namespace: `import * as controller from "./<module>.controller.js"`.
-- Use auxiliary files such as `auth.tokens.ts` or `auth.cookie.ts` for narrowly scoped helpers that would clutter a layer file.
+Organize the API by feature under `backend/src/routes/v1/modules/`. Keep responsibilities separated by layer without adding layers that do not solve a concrete problem.
 
-## Layers
+```text
+backend/src/routes/
+└── v1/
+    ├── index.ts                    # Mounts modules and applies shared middleware
+    └── modules/
+        ├── auth/
+        │   ├── auth.routes.ts      # HTTP methods, middleware, and paths
+        │   ├── auth.controller.ts  # Handles req/res and coordinates the request
+        │   ├── auth.service.ts     # Implements business rules
+        │   ├── auth.repository.ts  # Reads and writes database records
+        │   ├── auth.cookie.ts      # Cookie helpers
+        │   ├── auth.tokens.ts      # Token helpers
+        │   └── schemas/
+        │       ├── auth.login.schema.ts
+        │       └── auth.register.schema.ts
+        ├── users/
+        │   ├── users.routes.ts
+        │   ├── users.controller.ts
+        │   ├── users.service.ts
+        │   ├── users.repository.ts
+        │   └── schemas/
+        │       ├── users.delete.user.schema.ts
+        │       ├── users.username.schema.ts
+        │       ├── users.update.password.schema.ts
+        │       └── users.update.settings.schema.ts
+        └── pgErrorMapper.ts        # Maps PostgreSQL errors to application errors
+```
 
-### Routes (`*.routes.ts`)
+Requests flow through the layers in one direction:
 
-Always required. Map HTTP methods and paths and compose middleware, such as `validateBody(schema)`. Do not put business logic or direct database access here.
+```text
+Client
+  ↓
+v1/index.ts       Mounts modules and applies shared middleware
+  ↓
+*.routes.ts       Defines endpoints and validates input when needed
+  ↓
+*.controller.ts   Coordinates the HTTP request and response
+  ↓
+*.service.ts      Applies business rules
+  ↓
+*.repository.ts   Accesses PostgreSQL when persistence is needed
+  ↓
+Database
+```
 
-### Schemas (`schemas/*.schema.ts`)
+## Zod-inferred input types
 
-Required when an endpoint receives `body`, `params`, or `query` input. Create one Zod schema per operation and export its inferred type:
+This is a recommended practice, not a strict requirement. Define the input schema and export its inferred type from the schema file:
 
 ```typescript
-export const registerUserSchema = z.object({ ... })
-export type RegisterUserInput = z.infer<typeof registerUserSchema>
+export const updateSettingsSchema = z.object({
+  theme: z.enum(['light', 'dark', 'system']),
+})
+
+export type UpdateSettingsInput = z.infer<typeof updateSettingsSchema>
 ```
 
-`validateBody` uses `safeParse`; on failure, convert the result with `zodAdapter` and forward a `ValidationError` containing `issues` to the global error handler. Endpoints with no input do not need a schema.
+Use the inferred type in the controller instead of maintaining a duplicate request type under `src/types/`.
 
-### Controllers (`*.controller.ts`)
+If a type is used beyond request handling or across multiple modules, consider whether it represents a domain concept that belongs in `src/types/` rather than in a request schema.
 
-Always required. Handle HTTP concerns and orchestration only:
+## API error responses
 
-- Wrap every handler with `asyncHandler`.
-- Type `Request` with the schema-inferred input when applicable, for example `Request<unknown, unknown, RegisterUserInput>`.
-- Extract validated input and pass it to the service. Do not implement business rules or construct domain responses here.
-- Handle cookies and headers through dedicated helpers such as `*.cookie.ts`.
-- Send responses with `sendSuccess(res, { statusCode, data, message })`.
-- Use `baseLogger.child({ layer: "controller" })` for logging.
+Use an existing typed error when one matches the situation. If no specific error class fits, use `AppError` directly. Create a custom error class when the same error case recurs and a dedicated type would make the code clearer.
 
-### Services (`*.service.ts`)
+Provide the appropriate HTTP status code and a clear message. Include a stable `code` in most cases so clients can handle the error without relying on its message. Use `issues` when the response should identify specific invalid fields. For a request-level issue that does not belong to one field, use `field: 'root'`. Do not create an issue for an unexpected failure; let it reach the global error middleware.
 
-Always required. Services do not receive `req`/`res` or handle HTTP status codes.
+`AppError` requires a message. `ValidationError` can use its default message or receive a more specific one. A more specific message can help explain the failure, but keep client-facing messages safe and useful.
 
-- Implement business rules and assemble domain data, including simple payloads such as a health status.
-- Keep password hashing, JWT generation, calculations, and similar domain logic here.
-- Call repositories when persistence or queries are needed.
-- Throw typed errors (`ValidationError`, `UnauthorizedError`, `NotFoundError`, or `AppError`) when a rule fails. Include structured `issues` (`field`, `message`, `code`) when applicable.
-- Use `baseLogger.child({ layer: "service" })` for logging.
-
-### Repositories (`*.repository.ts`)
-
-Required only for PostgreSQL access. Do not create one for static health checks or pure in-memory calculations.
-
-- Use `pool.query` from `pg` and parameterized SQL (`$1`, `$2`, ...); never interpolate values into queries.
-- Keep business rules out of repositories.
-- Alias `snake_case` columns to `camelCase`, for example `password_hash AS "passwordHash"`.
-- In write operations, use `mapPgError` in `catch` to map PostgreSQL errors such as `23505` to `AppError` instances.
-
-## Response formats
-
-All responses use an outer envelope. Domain data, including a domain status such as `{ status: "ok" }`, belongs inside `data`, never at the root. Root fields are reserved for the HTTP envelope.
-
-### Success
-
-Use `sendSuccess`. Common status codes are `200` and `201`.
-
-```json
-{
-  "success": true,
-  "status": "success",
-  "data": "...",
-  "message": "Operação realizada com sucesso"
-}
-```
-
-- `success` is always `true`; `status` is always `"success"`.
-- `data` contains the domain payload; domain statuses belong inside it.
-- `message` is optional and human-readable.
-
-### Errors
-
-Use `AppError` instances and the global error middleware. Common status codes are `401`, `404`, `409`, `422`, `429`, and `500`.
-
-```json
-{
-  "success": false,
-  "status": "fail",
-  "code": "VALIDATION_ERROR",
-  "message": "Dados inválidos",
-  "issues": [
+```typescript
+throw new ValidationError({
+  issues: [
     {
-      "field": "email",
-      "message": "email já está em uso",
-      "code": "EMAIL_ALREADY_EXISTS"
-    }
+      field: 'password',
+      message: 'The password is incorrect; the account was not deleted.',
+      code: 'INVALID_VALUE',
+    },
   ],
-  "publicDetails": {}
-}
+})
 ```
 
-- `success` is always `false`.
-- `status` is `"fail"` for 4xx errors and `"error"` for 5xx errors.
-- `code` is an optional machine-readable identifier; `message` is human-readable.
-- `issues` is optional and contains `field`, `message`, and `code` for specific violations.
-- `publicDetails` is optional and must contain only safe client-facing details.
+## Success response format
+
+Successful API responses should use `sendSuccess` and an appropriate `2xx` status code. Keep the domain payload in `data` and return it as an object. If the value being returned is already an object, wrap it under a named property to make the response shape explicit.
+
+```typescript
+return sendSuccess<{ user: UserData }>(res, {
+  data: {
+    user: userData,
+  },
+})
+```

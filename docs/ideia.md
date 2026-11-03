@@ -50,8 +50,9 @@ Dominios podem ser posicionados em qualquer lugar do canva adicionado um signifi
 É nos dominios onde é 
 clicando com o botao esquerdo que abre um menu sidebar, q é onde o dominio realmente funciona
 clicando com o direito abre um menuzinho onde tem as seguintes opcoes:
-deletar dominio, criar relacionamento (linha entre um e outro dominio), 
-e linha de prioridade/direcao (uma flecha de um dominio pra outro)
+deletar dominio, criar relacionamento (linha entre um e outro dominio),
+relacionamento direcionado (flecha de um dominio para outro) e bidirecional
+(flecha nos dois sentidos)
 
 com o menu sidebar (no mode edicao)
 pode ser adicionado conteudo, anotacoes podendo tbm na hora que clica em "adicionar dominio" ou clicando em um dominio ja existente em um campo "adicionar"
@@ -80,7 +81,7 @@ Workspace B
 ### Ao sair e voltar para um workspace, o usuário deve retornar exatamente à posição/zoom anterior?
 Sim zoom deve se manter igual estava quando saiu do workspace, posicao dos dominios tbm devem se manter na mesma posicao que estavam
 ### Relacionamentos entre domínios
-é apenas visual, tanto o com seta ou só linha
+é apenas visual: linha, seta em uma direção ou seta nos dois sentidos
 ### Exclusao de dominios
 ao excluir um dominio é feito um efeito em cascada tudo q estava "dentro" do dominio é deletado (conteudo, notas e relacionamento entre dominios)
 
@@ -224,7 +225,8 @@ Quais ações serão reversíveis? Nenhuma, só por meio de re editar o q foi al
 
 Confirmação antes de exclusão, sim
 Undo pode recuperar domínio excluído? N tera mais undo redo
-Edição do nome/ícone do domínio, sera possivel
+Edição do nome do domínio será possível. Ícones de domínio ficam fora do escopo
+atual e não terão coluna na tabela inicial.
 
 ### Conteúdo
 

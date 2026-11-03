@@ -6,7 +6,7 @@ import { UnauthorizedError } from '../../../../utils/errors.js'
 import type { Request, Response } from 'express'
 
 import * as service from './users.service.js'
-import type { NewUsername } from './schemas/users.username.schema.js'
+import type { NewUsernameInput } from './schemas/users.username.schema.js'
 import type { ChangePasswordInput } from './schemas/users.update.password.schema.js'
 import { clearRefreshTokenHashCookie } from '../auth/auth.cookie.js'
 import type { DeleteUserInput } from './schemas/users.delete.user.schema.js'
@@ -27,7 +27,7 @@ export const me = asyncHandler(async (req: Request, res: Response) => {
 })
 
 export const updateUsername = asyncHandler(
-  async (req: Request<unknown, unknown, NewUsername>, res: Response) => {
+  async (req: Request<unknown, unknown, NewUsernameInput>, res: Response) => {
     if (!req.userId) throw new UnauthorizedError()
 
     const registeredNewUsername = await service.registerNewUsername(req.userId, req.body.username)

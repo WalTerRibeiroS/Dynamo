@@ -10,7 +10,7 @@ Domain     1 ───── 0..N  Content
 Domain     1 ───── 0..N  Note
 ```
 
-## Relacionamentos (linha e flecha)
+## Relacionamentos (linha, seta e seta bidirecional)
 
 ```
 	   Domain
@@ -29,9 +29,10 @@ Domain     1 ───── 0..N  Note
 ```
 Workspace 
 ├── nome
-├── zoom 
+├── zoom (0.50 a 3)
 ├── posição da câmera 
-├── tema
+├── paleta de cores
+├── modo leitura/edição (global ao Workspace)
 └── Domains
 ```
 
@@ -40,14 +41,14 @@ Workspace
 ```
 Domain
 ├── nome
-├── ícone
 ├── descrição
 ├── relacionamentos
 |    ├── origem 
 |    ├── destino 
 |    └── tipo
 |         ├── linha 
-|         └── direcionada
+|         ├── direcionada
+|         └── bidirecional
 ├── posição X
 └── posição Y
 ```

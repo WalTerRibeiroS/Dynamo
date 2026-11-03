@@ -1,6 +1,6 @@
 [ANTES DE ADICIONAR ESSA CONVENTION INSTALAR - `npm install clsx tailwind-merge`, adicionar nos patterns e adaptar no final]
 
-# When to use Tailwind vs. pure CSS
+# When to use Tailwind vs. CSS
 
 * Use Tailwind utilities for spacing, colors, typography, layout (`flex`/`grid`), states (`hover:`, `focus-visible:`, `dark:`), and simple responsive variations.
 * Use plain CSS for multi-stage `@keyframes`, complex selectors such as `:has()` or sibling combinators, elaborate pseudo-elements, `clip-path`, or deeply nested `calc()` expressions.
