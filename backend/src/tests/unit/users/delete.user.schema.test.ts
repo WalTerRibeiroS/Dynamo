@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { deleteUserSchema } from '../../../routes/v1/modules/users/schemas/users.delete.user.schema.js'
+import { deleteUserSchema } from '../../../routes/v1/modules/users/schemas/users.delete.user.js'
 
 describe('deleteUserSchema', () => {
   it('aceita uma senha válida', () => {

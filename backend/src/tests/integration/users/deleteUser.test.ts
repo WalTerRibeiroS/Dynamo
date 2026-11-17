@@ -68,7 +68,13 @@ describe('DELETE /api/v1/users/me (integração)', () => {
 
     expect(response.status).toBe(422)
 
-    expect(response.body.success).toBe(false)
+    expect(response.body).toMatchObject({
+      success: false,
+      code: 'VALIDATION_ERROR',
+      issues: expect.arrayContaining([
+        expect.objectContaining({ code: 'INVALID_VALUE', field: 'password' }),
+      ]),
+    })
 
     expect(await repository.getUserDataById(idFake)).toMatchObject({ id: idFake })
 
@@ -94,6 +100,14 @@ describe('DELETE /api/v1/users/me (integração)', () => {
     ])
 
     expect(responses.map((response) => response.status).sort()).toEqual([200, 409])
+    const conflictResponse = responses.find(({ status }) => status === 409)
+    expect(conflictResponse?.body).toMatchObject({
+      code: 'CONCURRENCY_ERROR',
+      issues: expect.arrayContaining([
+        expect.objectContaining({ code: 'CONCURRENT_ACCOUNT_DELETION' }),
+      ]),
+    })
+    expect(conflictResponse?.body.issues[0]).not.toHaveProperty('field')
   })
 
   it('rejeita senha quando vem mal formatada', async () => {
@@ -104,7 +118,13 @@ describe('DELETE /api/v1/users/me (integração)', () => {
 
     expect(response.status).toBe(422)
 
-    expect(response.body.success).toBe(false)
+    expect(response.body).toMatchObject({
+      success: false,
+      code: 'VALIDATION_ERROR',
+      issues: expect.arrayContaining([
+        expect.objectContaining({ code: 'MIN_LENGTH', field: 'password' }),
+      ]),
+    })
   })
 
   it('rejeita quando vem corpo ausente', async () => {
@@ -115,6 +135,12 @@ describe('DELETE /api/v1/users/me (integração)', () => {
 
     expect(response.status).toBe(422)
 
-    expect(response.body.success).toBe(false)
+    expect(response.body).toMatchObject({
+      success: false,
+      code: 'VALIDATION_ERROR',
+      issues: expect.arrayContaining([
+        expect.objectContaining({ code: 'INVALID_TYPE', field: 'root' }),
+      ]),
+    })
   })
 })

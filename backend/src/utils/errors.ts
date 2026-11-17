@@ -1,5 +1,5 @@
 import type { Issue } from '../types/issue.js'
-import type { ValidationErrorOptions } from '../types/validationErrorOptions.js'
+import type { ErrorOptions } from '../types/ErrorOptions.js'
 
 export class AppError<C extends string = string> extends Error {
   public readonly statusCode: number
@@ -49,14 +49,13 @@ export class NotFoundError extends AppError<'NOT_FOUND'> {
 }
 
 export class ValidationError extends AppError<'VALIDATION_ERROR'> {
-  constructor({ issues, details, publicDetails, message }: ValidationErrorOptions = {}) {
+  constructor({ issues, publicDetails, message }: ErrorOptions = {}) {
     super({
       message: message ?? 'Dados inválidos',
       statusCode: 422,
       code: 'VALIDATION_ERROR',
       ...(issues && { issues }),
       ...(publicDetails && { publicDetails }),
-      ...(details !== undefined && { details }),
     })
   }
 }
@@ -78,6 +77,29 @@ export class UnauthorizedError extends AppError<'UNAUTHORIZED'> {
       message,
       statusCode: 401,
       code: 'UNAUTHORIZED',
+    })
+  }
+}
+
+export class DatabaseConflitError extends AppError<'DATABASE_CONFLIT'> {
+  constructor({ issues, publicDetails, message }: ErrorOptions = {}) {
+    super({
+      message: message ?? 'Conflito de dados',
+      statusCode: 409,
+      code: 'DATABASE_CONFLIT',
+      ...(issues && { issues }),
+      ...(publicDetails && { publicDetails }),
+    })
+  }
+}
+
+export class ConcurrencyError extends AppError<'CONCURRENCY_ERROR'> {
+  constructor(issues: Issue[]) {
+    super({
+      message: 'Conflito de dados',
+      statusCode: 409,
+      code: 'CONCURRENCY_ERROR',
+      ...(issues && { issues }),
     })
   }
 }

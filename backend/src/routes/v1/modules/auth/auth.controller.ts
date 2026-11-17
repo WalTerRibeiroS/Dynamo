@@ -8,8 +8,8 @@ import {
 } from './auth.cookie.js'
 
 import type { Request, Response } from 'express'
-import type { RegisterUserInput } from './schemas/auth.register.schema.js'
-import type { LoginUserInput } from './schemas/auth.login.schema.js'
+import type { RegisterUserInput } from './schemas/auth.register.js'
+import type { LoginUserInput } from './schemas/auth.login.js'
 
 import * as service from './auth.service.js'
 

@@ -1,8 +1,41 @@
 import pool from '../../../../config/db.js'
-import { mapPgError } from '../pgErrorMapper.js'
-import { AppError } from '../../../../utils/errors.js'
+import { isDatabaseError } from '../../../../utils/isDatabaseError.js'
+import { DatabaseConflitError } from '../../../../utils/errors.js'
 
 import type { CreatedUser, CreateUserInput, UserPasswordId } from '../../../../types/user.js'
+
+function authCreateError(error: unknown): never {
+  if (isDatabaseError(error)) {
+
+    if (error.code === '23505' &&
+      error.constraint === 'users_username_unique') {
+      throw new DatabaseConflitError({
+        issues: [
+          {
+            message: 'Nome de usuário já está em uso.',
+            code: 'USERNAME_ALREADY_EXISTS',
+            field: 'username',
+          },
+        ],
+      })
+    }
+
+    if (error.code === '23505' &&
+      error.constraint === 'users_email_unique') {
+      throw new DatabaseConflitError({
+        issues: [
+          {
+            message: 'Email já está em uso.',
+            code: 'EMAIL_ALREADY_EXISTS',
+            field: 'email',
+          },
+        ],
+      })
+    }
+  }
+
+  throw error
+}
 
 //fiz dessa maneira pq o objetivo dessa funcao é apenas verificar se o email/username existe ou n no db
 //como username e email tem a constraind UNIQUE ou existe 1 ou n
@@ -63,17 +96,7 @@ export const createUser = async ({
 
     return createdUser
   } catch (error) {
-    mapPgError(error, {
-      '23505': (e) => {
-        const field = e.constraint === 'users_username_unique' ? 'username' : 'email'
-        return new AppError({
-          message: `${field === 'username' ? 'Nome de usuário' : 'Email'} já está em uso`,
-          statusCode: 409,
-          code: 'DUPLICATE_FIELD',
-          publicDetails: { field },
-        })
-      },
-    })
+    authCreateError(error)
   }
 }
 

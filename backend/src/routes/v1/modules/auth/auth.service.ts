@@ -7,8 +7,8 @@ import { UnauthorizedError } from '../../../../utils/errors.js'
 import { issueAuthTokens, createHashToken } from './auth.tokens.js'
 import { verifyRefreshToken } from './auth.tokens.js'
 
-import type { RegisterUserInput } from './schemas/auth.register.schema.js'
-import type { LoginUserInput } from './schemas/auth.login.schema.js'
+import type { RegisterUserInput } from './schemas/auth.register.js'
+import type { LoginUserInput } from './schemas/auth.login.js'
 import type { Issue } from '../../../../types/issue.js'
 import type { CreatedUser, CreateUserInput } from '../../../../types/user.js'
 

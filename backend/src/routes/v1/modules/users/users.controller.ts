@@ -1,87 +1,63 @@
-//import baseLogger from '../../../../utils/logger.js'
-import { asyncHandler } from '../../../../utils/asyncHandler.js'
+import { authedHandler } from '../../../../utils/authedHandler.js'
 import { sendSuccess } from '../../../../utils/sendSuccess.js'
-import { UnauthorizedError } from '../../../../utils/errors.js'
-
-import type { Request, Response } from 'express'
 
 import * as service from './users.service.js'
-import type { NewUsernameInput } from './schemas/users.username.schema.js'
-import type { ChangePasswordInput } from './schemas/users.update.password.schema.js'
+import type { NewUsernameInput } from './schemas/users.username.js'
+import type { ChangePasswordInput } from './schemas/users.update.password.js'
 import { clearRefreshTokenHashCookie } from '../auth/auth.cookie.js'
-import type { DeleteUserInput } from './schemas/users.delete.user.schema.js'
+import type { DeleteUserInput } from './schemas/users.delete.user.js'
 import type { updateSettingsInput, UserData } from '../../../../types/user.js'
 
-//const logger = baseLogger.child({ layer: 'controller' })
-
-export const me = asyncHandler(async (req: Request, res: Response) => {
-  if (!req.userId) throw new UnauthorizedError()
-
+export const me = authedHandler(async (req, res) => {
   const userData = await service.getUserData(req.userId)
 
   return sendSuccess<{ user: UserData }>(res, {
     data: {
-      user: userData
-    }
+      user: userData,
+    },
   })
 })
 
-export const updateUsername = asyncHandler(
-  async (req: Request<unknown, unknown, NewUsernameInput>, res: Response) => {
-    if (!req.userId) throw new UnauthorizedError()
+export const updateUsername = authedHandler<unknown, NewUsernameInput>(async (req, res) => {
+  const registeredNewUsername = await service.registerNewUsername(req.userId, req.body.username)
 
-    const registeredNewUsername = await service.registerNewUsername(req.userId, req.body.username)
-
-    return sendSuccess(res, {
-      data: {
-        username: registeredNewUsername
-      }
-    })
-  },
-)
+  return sendSuccess(res, {
+    data: {
+      username: registeredNewUsername,
+    },
+  })
+})
 
 // eu apenas retorno para o front o theme atualizado para ficar mais facil de eu testar
 // o front só dependera de sucesso ou falha, pq ele vai alterar o theme na hora sem depender da resposta da API voltar para dai sim ele atualizar na tela
 
-export const updateSettings = asyncHandler(
-  async (req: Request<unknown, unknown, updateSettingsInput>, res: Response) => {
-    if (!req.userId) throw new UnauthorizedError()
+export const updateSettings = authedHandler<unknown, updateSettingsInput>(async (req, res) => {
+  const newTheme = await service.changeSettings(req.userId, req.body.theme)
 
-    const newTheme = await service.changeSettings(req.userId, req.body.theme)
+  return sendSuccess(res, {
+    data: {
+      theme: newTheme,
+    },
+  })
+})
 
-    return sendSuccess(res, {
-      data: {
-        theme: newTheme
-      }
-    })
-  },
-)
+export const updatePassword = authedHandler<unknown, ChangePasswordInput>(async (req, res) => {
+  await service.changePassword(req.userId, req.body.currentPassword, req.body.newPassword)
 
-export const updatePassword = asyncHandler(
-  async (req: Request<unknown, unknown, ChangePasswordInput>, res: Response) => {
-    if (!req.userId) throw new UnauthorizedError()
+  // sessão encerada, tbm é feito a limpeza no banco
+  clearRefreshTokenHashCookie(res)
 
-    await service.changePassword(req.userId, req.body.currentPassword, req.body.newPassword)
+  return sendSuccess(res, {
+    message: 'senha alterada com sucesso e sessão encerrada',
+  })
+})
 
-    // sessão encerada, tbm é feito a limpeza no banco
-    clearRefreshTokenHashCookie(res)
+export const deleteUser = authedHandler<unknown, DeleteUserInput>(async (req, res) => {
+  await service.deleteUser(req.userId, req.body.password)
 
-    return sendSuccess(res, {
-      message: 'senha alterada com sucesso e sessão encerrada',
-    })
-  },
-)
+  clearRefreshTokenHashCookie(res)
 
-export const deleteUser = asyncHandler(
-  async (req: Request<unknown, unknown, DeleteUserInput>, res: Response) => {
-    if (!req.userId) throw new UnauthorizedError()
-
-    await service.deleteUser(req.userId, req.body.password)
-
-    clearRefreshTokenHashCookie(res)
-
-    return sendSuccess(res, {
-      message: 'Conta excluída com sucesso',
-    })
-  },
-)
+  return sendSuccess(res, {
+    message: 'Conta excluída com sucesso',
+  })
+})

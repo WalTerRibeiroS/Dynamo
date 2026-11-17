@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { updateSettingsSchema } from '../../../routes/v1/modules/users/schemas/users.update.settings.schema.js'
+import { updateSettingsSchema } from '../../../routes/v1/modules/users/schemas/users.update.settings.js'
 
 describe('updateSettingsSchema', () => {
   it.each(['light', 'dark', 'system'])('aceita o tema %s', (theme) => {

@@ -1,6 +1,5 @@
 import { z } from 'zod'
-import type { Issue } from '../types/issue.js'
-import type { DomainCode } from '../types/issue.js'
+import type { Issue, DomainCode } from '../types/issue.js'
 
 type ZodCode = z.ZodError['issues'][number]['code']
 type ZodIssues = z.ZodError['issues']

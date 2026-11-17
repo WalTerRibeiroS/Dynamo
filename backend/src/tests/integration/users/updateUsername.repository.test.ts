@@ -52,10 +52,12 @@ describe('updateUsername', () => {
     await createUser(userFake)
 
     await expect(updateUsername(idFake, 'walter')).rejects.toMatchObject({
-      code: 'USERNAME_ALREADY_EXISTS',
-      publicDetails: { field: 'username' },
-      statusCode: 409,
-    })
+        code: 'DATABASE_CONFLIT',
+        issues: [{
+          code: 'USERNAME_ALREADY_EXISTS',
+          field: 'username'
+        }]
+      })
   })
 
   it('atualiza updated_at junto com o username', async () => {

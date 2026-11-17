@@ -75,7 +75,13 @@ describe('PATCH /api/v1/users/me/password (integração)', () => {
 
     expect(response.status).toBe(422)
 
-    expect(response.body.success).toBe(false)
+    expect(response.body).toMatchObject({
+      success: false,
+      code: 'VALIDATION_ERROR',
+      issues: expect.arrayContaining([
+        expect.objectContaining({ code: 'INVALID_VALUE', field: 'currentPassword' }),
+      ]),
+    })
   })
 
   it('lança ValidationError quando a senha nova é igual a antiga', async () => {
@@ -89,7 +95,13 @@ describe('PATCH /api/v1/users/me/password (integração)', () => {
 
     expect(response.status).toBe(422)
 
-    expect(response.body.success).toBe(false)
+    expect(response.body).toMatchObject({
+      success: false,
+      code: 'VALIDATION_ERROR',
+      issues: expect.arrayContaining([
+        expect.objectContaining({ code: 'PASSWORD_DUPLICATION', field: 'newPassword' }),
+      ]),
+    })
   })
 
   it('só uma de duas requisições simultâneas vence', async () => {
@@ -115,6 +127,14 @@ describe('PATCH /api/v1/users/me/password (integração)', () => {
     ])
 
     expect(responses.map((response) => response.status).sort()).toEqual([200, 409])
+    const conflictResponse = responses.find(({ status }) => status === 409)
+    expect(conflictResponse?.body).toMatchObject({
+      code: 'CONCURRENCY_ERROR',
+      issues: expect.arrayContaining([
+        expect.objectContaining({ code: 'CONCURRENT_PASSWORD_UPDATE' }),
+      ]),
+    })
+    expect(conflictResponse?.body.issues[0]).not.toHaveProperty('field')
   })
 
   it('rejeita quando a nova senha vem malformatada', async () => {
@@ -128,7 +148,13 @@ describe('PATCH /api/v1/users/me/password (integração)', () => {
 
     expect(response.status).toBe(422)
 
-    expect(response.body.success).toBe(false)
+    expect(response.body).toMatchObject({
+      success: false,
+      code: 'VALIDATION_ERROR',
+      issues: expect.arrayContaining([
+        expect.objectContaining({ code: 'INVALID_FORMAT', field: 'newPassword' }),
+      ]),
+    })
   })
 
   it('rejeita quando vem com cambos ausentes', async () => {
@@ -139,7 +165,13 @@ describe('PATCH /api/v1/users/me/password (integração)', () => {
 
     expect(response.status).toBe(422)
 
-    expect(response.body.success).toBe(false)
+    expect(response.body).toMatchObject({
+      success: false,
+      code: 'VALIDATION_ERROR',
+      issues: expect.arrayContaining([
+        expect.objectContaining({ code: 'INVALID_TYPE', field: 'root' }),
+      ]),
+    })
   })
 
   it('faz login com a nova senha', async () => {
@@ -177,6 +209,9 @@ describe('PATCH /api/v1/users/me/password (integração)', () => {
 
     expect(refresh.status).toBe(401)
 
-    expect(refresh.body.success).toBe(false)
+    expect(refresh.body).toMatchObject({
+      success: false,
+      code: 'UNAUTHORIZED',
+    })
   })
 })

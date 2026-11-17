@@ -1,9 +1,42 @@
 import pool from '../../../../config/db.js'
-import { mapPgError } from '../pgErrorMapper.js'
+import { isDatabaseError } from '../../../../utils/isDatabaseError.js'
 
 import type { UserData } from '../../../../types/user.js'
-import { AppError } from '../../../../utils/errors.js'
+import { DatabaseConflitError } from '../../../../utils/errors.js'
 import type { updateSettingsInput, UserTheme } from '../../../../types/user.js'
+
+function usersCreateError(error: unknown): never {
+  if (isDatabaseError(error)) {
+
+    if (error.code === '23505' &&
+      error.constraint === 'users_username_unique') {
+      throw new DatabaseConflitError({
+        issues: [
+          {
+            message: 'username já está em uso.',
+            code: 'USERNAME_ALREADY_EXISTS',
+            field: 'username',
+          },
+        ],
+      })
+    }
+
+    if (error.code === '23514' &&
+      error.constraint === 'users_theme_check') {
+      throw new DatabaseConflitError({
+        issues: [
+          {
+            message: 'tema deve ser apenas escuro, branco ou padrão do sistema.',
+            code: 'THEME_NOT_ALLOWED',
+            field: 'theme'
+          },
+        ],
+      })
+    }
+  }
+
+  throw error
+}
 
 export const getUserDataById = async (userId: string): Promise<UserData | undefined> => {
   const { rows } = await pool.query<UserData>(
@@ -45,16 +78,7 @@ export const updateUsername = async (
 
     return rows[0]?.username
   } catch (error) {
-    mapPgError(error, {
-      '23505': () => {
-        return new AppError({
-          message: 'username já está em uso',
-          statusCode: 409,
-          code: 'USERNAME_ALREADY_EXISTS',
-          publicDetails: { field: 'username' },
-        })
-      },
-    })
+    usersCreateError(error)
   }
 }
 
@@ -77,16 +101,7 @@ export const updateSettings = async (
 
     return rows[0]?.theme
   } catch (error) {
-    mapPgError(error, {
-      '23514': () => {
-        return new AppError({
-          message: 'tema deve ser apenas escuro, branco ou padrão do sistema',
-          statusCode: 409,
-          code: 'THEME_NOT_ALLOWED',
-          publicDetails: { field: 'theme' },
-        })
-      },
-    })
+    usersCreateError(error)
   }
 }
 

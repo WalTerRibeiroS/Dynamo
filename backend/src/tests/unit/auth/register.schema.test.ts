@@ -1,6 +1,6 @@
 // register.schema.test.ts
 import { describe, it, expect } from 'vitest'
-import { registerUserSchema } from '../../../routes/v1/modules/auth/schemas/auth.register.schema.js'
+import { registerUserSchema } from '../../../routes/v1/modules/auth/schemas/auth.register.js'
 
 describe('registerUserSchema', () => {
   const validPayload = {

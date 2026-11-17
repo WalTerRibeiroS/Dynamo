@@ -6,13 +6,13 @@ export default defineConfig({
       {
         test: {
           name: 'unit',
-          include: ['./testes/unit/**/*.test.ts'],
+          include: ['./tests/unit/**/*.test.ts'],
         },
       },
       {
         test: {
           name: 'integration',
-          include: ['./testes/integration/**/*.test.ts'],
+          include: ['./tests/integration/**/*.test.ts'],
           testTimeout: 10000, // I/O real demora mais que unit
           // setupFiles: ['./testes/integration/setup.ts'], // quando for conectar num banco de teste
         },
@@ -20,7 +20,7 @@ export default defineConfig({
       {
         test: {
           name: 'e2e',
-          include: ['./testes/e2e/**/*.test.ts'],
+          include: ['./tests/e2e/**/*.test.ts'],
           testTimeout: 15000,
         },
       },

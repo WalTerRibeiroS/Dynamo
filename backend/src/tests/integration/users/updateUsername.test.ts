@@ -46,7 +46,10 @@ describe('PATCH /api/v1/users/me (integração)', () => {
 
     expect(response.status).toBe(404)
 
-    expect(response.body.success).toBe(false)
+    expect(response.body).toMatchObject({
+      success: false,
+      code: 'NOT_FOUND',
+    })
   })
 
   it('retorna erro quando o username já existe', async () => {
@@ -65,7 +68,16 @@ describe('PATCH /api/v1/users/me (integração)', () => {
 
     expect(response.status).toBe(409)
 
-    expect(response.body.success).toBe(false)
+    expect(response.body).toMatchObject({
+      success: false,
+      code: 'DATABASE_CONFLIT',
+      issues: expect.arrayContaining([
+        expect.objectContaining({
+          code: 'USERNAME_ALREADY_EXISTS',
+          field: 'username',
+        }),
+      ]),
+    })
 
     expect(response.body.data).toBeUndefined()
   })
@@ -95,6 +107,15 @@ describe('PATCH /api/v1/users/me (integração)', () => {
     ])
 
     expect(responses.map((response) => response.status).sort()).toEqual([200, 409])
+    expect(responses.find(({ status }) => status === 409)?.body).toMatchObject({
+      code: 'DATABASE_CONFLIT',
+      issues: expect.arrayContaining([
+        expect.objectContaining({
+          code: 'USERNAME_ALREADY_EXISTS',
+          field: 'username',
+        }),
+      ]),
+    })
 
     const users = await Promise.all([
       getUserDataById(idFake),
@@ -112,7 +133,13 @@ describe('PATCH /api/v1/users/me (integração)', () => {
 
     expect(response.status).toBe(422)
 
-    expect(response.body.success).toBe(false)
+    expect(response.body).toMatchObject({
+      success: false,
+      code: 'VALIDATION_ERROR',
+      issues: expect.arrayContaining([
+        expect.objectContaining({ code: 'INVALID_FORMAT', field: 'username' }),
+      ]),
+    })
   })
 
   it('rejeita campo ausente', async () => {
@@ -123,6 +150,12 @@ describe('PATCH /api/v1/users/me (integração)', () => {
 
     expect(response.status).toBe(422)
 
-    expect(response.body.success).toBe(false)
+    expect(response.body).toMatchObject({
+      success: false,
+      code: 'VALIDATION_ERROR',
+      issues: expect.arrayContaining([
+        expect.objectContaining({ code: 'INVALID_TYPE', field: 'root' }),
+      ]),
+    })
   })
 })

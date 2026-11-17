@@ -36,16 +36,18 @@ describe('updateSettings', () => {
     expect(newTheme).toBeUndefined()
   })
 
-  it('rejeita com erro de check_violation quando o theme não existe no grupo determinado', async () => {
+  it('rejeita com erro de conflito quando o theme não existe no grupo determinado', async () => {
     await createUser(userFake)
 
     await expect(
       repository.updateSettings(idFake, 'blue' as UserTheme), //uso do 'as' apenas para n dar erro no compilador e eu realmente conseguir testar
     ).rejects.toMatchObject({
-      statusCode: 409,
-      code: 'THEME_NOT_ALLOWED',
-      publicDetails: { field: 'theme' },
-    })
+        code: 'DATABASE_CONFLIT',
+        issues: [{
+          code: 'THEME_NOT_ALLOWED',
+          field: 'theme'
+        }]
+      })
   })
 
   it('atualiza updated_at junto com o theme', async () => {

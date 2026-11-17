@@ -59,16 +59,23 @@ describe('POST /api/v1/auth/refresh (integração)', () => {
 
   it('rejeita o reuso do refresh token antigo', async () => {
     await refreshWith(refreshToken).expect(200)
-    await refreshWith(refreshToken).expect(401)
+    const response = await refreshWith(refreshToken)
+
+    expect(response.status).toBe(401)
+    expect(response.body.code).toBe('UNAUTHORIZED')
   })
 
   it('rejeita quando não há cookie', async () => {
-    await request(app).post('/api/v1/auth/refresh').expect(401)
+    const response = await request(app).post('/api/v1/auth/refresh')
+
+    expect(response.status).toBe(401)
+    expect(response.body.code).toBe('UNAUTHORIZED')
   })
 
   it('só uma de duas requisições simultâneas vence', async () => {
     const responses = await Promise.all([refreshWith(refreshToken), refreshWith(refreshToken)])
 
     expect(responses.map((response) => response.status).sort()).toEqual([200, 401])
+    expect(responses.find(({ status }) => status === 401)?.body.code).toBe('UNAUTHORIZED')
   })
 })

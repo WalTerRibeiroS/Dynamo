@@ -1,6 +1,6 @@
 ```SQL
 CREATE TABLE workspaces (
-    id UUID PRIMARY KEY,
+    workspace_id UUID PRIMARY KEY,
     user_id UUID NOT NULL,
     workspace_name VARCHAR(50) NOT NULL,
     zoom DOUBLE PRECISION NOT NULL DEFAULT 1,
@@ -16,9 +16,6 @@ CREATE TABLE workspaces (
         REFERENCES users(id)
         ON DELETE CASCADE,
 
-    CONSTRAINT workspaces_user_name_unique
-        UNIQUE (user_id, workspace_name),
-
     CONSTRAINT workspaces_zoom_range_check
         CHECK (zoom BETWEEN 0.50 AND 3),
 
@@ -27,11 +24,14 @@ CREATE TABLE workspaces (
             'red', 'green', 'blue', 'purple', 'yellow', 'white', 'black'
         ))
 );
+
+CREATE UNIQUE INDEX workspaces_user_name_unique
+    ON workspaces (user_id, lower(btrim(workspace_name)));
 ```
 
 no futuro se sobrar tempo e vontade eu queria adiconar uma coluna de `position` para poder reondenar os workspaces na ordem que o user quisesse
 
-e tambem uma coluna de `icon` que o user poderia escolher para representar o workspace
+e tambem uma coluna de `icon` que o user poderia escolher um icone para representar o workspace
 
 Trigger para evitar que passe de 5 workspaces por user:
 

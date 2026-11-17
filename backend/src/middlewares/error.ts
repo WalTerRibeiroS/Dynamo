@@ -35,6 +35,7 @@ const errorMiddleware: ErrorRequestHandler = (err, req, res, _) => {
   return res.status(500).json({
     success: false,
     status: 'error',
+    code: 'INTERNAL_ERROR',
     message: isDev ? err.message : 'Erro interno do servidor',
     ...(isDev && { stack: err.stack }),
   })

@@ -24,6 +24,7 @@ describe('errorMiddleware', () => {
 
     expect(response.status).toBe(500)
     expect(response.body).toEqual({
+      code: "INTERNAL_ERROR",
       success: false,
       status: 'error',
       message: 'Erro interno do servidor',

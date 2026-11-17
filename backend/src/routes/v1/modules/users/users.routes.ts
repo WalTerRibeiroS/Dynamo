@@ -1,12 +1,12 @@
 import { Router } from 'express'
 
 import { validateBody } from '../../../../middlewares/validateBody.js'
-import { updateUsernameSchema } from './schemas/users.username.schema.js'
-import { updateSettingsSchema } from './schemas/users.update.settings.schema.js'
+import { updateUsernameSchema } from './schemas/users.username.js'
+import { updateSettingsSchema } from './schemas/users.update.settings.js'
 
 import * as controller from './users.controller.js'
-import { updatePasswordSchema } from './schemas/users.update.password.schema.js'
-import { deleteUserSchema } from './schemas/users.delete.user.schema.js'
+import { updatePasswordSchema } from './schemas/users.update.password.js'
+import { deleteUserSchema } from './schemas/users.delete.user.js'
 import { usersSecurityLimiter } from '../../../../config/rateLimiter.js'
 
 const router = Router()

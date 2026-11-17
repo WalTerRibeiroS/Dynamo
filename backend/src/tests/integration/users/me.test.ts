@@ -49,6 +49,9 @@ describe('GET /api/v1/users/me (integração)', () => {
 
     expect(response.status).toBe(404)
 
-    expect(response.body.success).toBe(false)
+    expect(response.body).toMatchObject({
+      success: false,
+      code: 'NOT_FOUND',
+    })
   })
 })

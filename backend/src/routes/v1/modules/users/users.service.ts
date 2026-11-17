@@ -1,6 +1,6 @@
 import baseLogger from '../../../../utils/logger.js'
 
-import { AppError, NotFoundError, ValidationError } from '../../../../utils/errors.js'
+import { AppError, ConcurrencyError, NotFoundError, ValidationError } from '../../../../utils/errors.js'
 
 import bcrypt from 'bcrypt'
 
@@ -106,13 +106,13 @@ export const changePassword = async (
   )
 
   if (!updatedPassword) {
-    throw new AppError({
-      statusCode: 409,
-      code: 'CONCURRENT_PASSWORD_UPDATE',
-      message: 'Não foi possível atualizar a senha. Tente novamente.',
-    })
+    throw new ConcurrencyError([
+      {
+        code: 'CONCURRENT_PASSWORD_UPDATE',
+        message: 'Não foi possível atualizar a senha. Tente novamente.',
+      }
+    ])
   }
-
 }
 
 export const deleteUser = async (userId: string, password: string): Promise<void> => {
@@ -140,10 +140,11 @@ export const deleteUser = async (userId: string, password: string): Promise<void
   const deletedUserAccount = await repository.deleteAccount(userId, passwordHash)
 
   if (!deletedUserAccount) {
-    throw new AppError({
-      statusCode: 409,
-      code: 'CONCURRENT_ACCOUNT_DELETION',
-      message: 'Não foi possível apagar a conta. Tente novamente.',
-    })
+    throw new ConcurrencyError([
+      {
+        code: 'CONCURRENT_ACCOUNT_DELETION',
+        message: 'Não foi possível apagar a conta. Tente novamente.',
+      }
+    ])
   }
 }

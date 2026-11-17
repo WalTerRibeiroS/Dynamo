@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { loginUserSchema } from '../../../routes/v1/modules/auth/schemas/auth.login.schema.js'
+import { loginUserSchema } from '../../../routes/v1/modules/auth/schemas/auth.login.js'
 
 describe('loginUserSchema', () => {
   const validPayload = {

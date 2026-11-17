@@ -45,7 +45,10 @@ describe('PATCH /api/v1/users/me/settings (integração)', () => {
 
     expect(response.status).toBe(404)
 
-    expect(response.body.success).toBe(false)
+    expect(response.body).toMatchObject({
+      success: false,
+      code: 'NOT_FOUND',
+    })
   })
 
   it('rejeita theme inexistente', async () => {
@@ -56,7 +59,13 @@ describe('PATCH /api/v1/users/me/settings (integração)', () => {
 
     expect(response.status).toBe(422)
 
-    expect(response.body.success).toBe(false)
+    expect(response.body).toMatchObject({
+      success: false,
+      code: 'VALIDATION_ERROR',
+      issues: expect.arrayContaining([
+        expect.objectContaining({ code: 'INVALID_VALUE', field: 'theme' }),
+      ]),
+    })
   })
 
   it('rejeita corpo ausente', async () => {
@@ -67,6 +76,12 @@ describe('PATCH /api/v1/users/me/settings (integração)', () => {
 
     expect(response.status).toBe(422)
 
-    expect(response.body.success).toBe(false)
+    expect(response.body).toMatchObject({
+      success: false,
+      code: 'VALIDATION_ERROR',
+      issues: expect.arrayContaining([
+        expect.objectContaining({ code: 'INVALID_TYPE', field: 'root' }),
+      ]),
+    })
   })
 })

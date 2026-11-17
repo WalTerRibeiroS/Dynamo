@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { updateUsernameSchema } from '../../../routes/v1/modules/users/schemas/users.username.schema.js'
+import { updateUsernameSchema } from '../../../routes/v1/modules/users/schemas/users.username.js'
 
 describe('updateUsernameSchema', () => {
   it('aceita um username válido', () => {

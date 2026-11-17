@@ -9,25 +9,25 @@ Disponibilizar operações para criar, listar, carregar, atualizar e excluir Wor
 1. Receber `name` e, opcionalmente, `colorPalette`.
 2. Aparar espaços no início e no fim do nome. O nome é obrigatório, não pode ficar vazio e tem limite de 50 caracteres; a regra exata de contagem após aparar ainda está pendente.
 3. Aceitar apenas as paletas `red`, `green`, `blue`, `purple`, `yellow`, `white` e `black`. Usar `purple` quando a paleta for omitida.
-4. Gerar o `id` no backend e associar o Workspace ao usuário autenticado, sem aceitar `id` ou `userId` do cliente.
+4. Gerar o `workspaceId` no backend e associar o Workspace ao usuário autenticado, sem aceitar `workspaceId` ou `userId` do cliente.
 5. Impedir nomes repetidos para o mesmo usuário, ignorando maiúsculas e minúsculas. A regra atual documentada no banco ainda precisa ser ajustada para refletir essa comparação e o aparo de espaços.
 6. Impedir que o usuário ultrapasse o limite de cinco Workspaces.
 7. Iniciar a visualização com `zoom: 1`, `cameraX: 0` e `cameraY: 0`, e o Workspace em modo de edição (`isEditMode: true`).
 
 ## `GET /workspaces`
 
-1. Listar somente os dados necessários ao seletor: `id`, `userId`, nome e `colorPalette`.
-2. Retornar o nome em camelCase. A propriedade ainda está pendente de definição: `name` ou `workspaceName`.
+1. Listar somente os dados necessários ao seletor: `workspaceId`, `userId`, `workspaceName` e `colorPalette`.
+2. Retornar o nome em camelCase.
 
-## `GET /workspaces/:id`
+## `GET /workspaces/:workspaceId`
 
 1. Carregar o Workspace solicitado pelo usuário autenticado.
-2. Retornar `id`, `userId`, nome, `zoom`, `cameraX`, `cameraY`, `colorPalette` e `isEditMode`, sem `createdAt` e `updatedAt`.
+2. Retornar `zoom`, `cameraX`, `cameraY` e `isEditMode`.
 3. Não incluir Domains nesta etapa. O campo `domains` será adicionado quando a parte de Domains estiver disponível.
 
-## `PATCH /workspaces/:id`
+## `PATCH /workspaces/:workspaceId`
 
-1. Aceitar alterações de `name`, `colorPalette` ou ambos.
+1. Aceitar alterações de `workspaceName`, `colorPalette` ou ambos.
 2. Aplicar ao nome as mesmas regras de aparo, obrigatoriedade, limite, unicidade e comparação sem diferenciar maiúsculas e minúsculas da criação.
 3. Aceitar somente as paletas definidas na criação.
 4. Rejeitar requisição sem campo atualizável, inclusive quando os valores enviados forem `null`.
@@ -42,12 +42,12 @@ Disponibilizar operações para criar, listar, carregar, atualizar e excluir Wor
 5. Tratar `cameraX` e `cameraY` como deslocamento da câmera; essa rota não move nem altera a posição dos Domains.
 6. Ao centralizar o Canvas, definir `cameraX` e `cameraY` como `0` e preservar o zoom atual.
 
-## `PATCH /workspaces/:id/mode`
+## `PATCH /workspaces/:workspaceId/mode`
 
 1. Receber `{ isEditMode: boolean }` e persistir o valor solicitado, sem alternar implicitamente o estado atual.
 2. Iniciar novos Workspaces com `isEditMode: true`.
 
-## `DELETE /workspaces/:id`
+## `DELETE /workspaces/:workspaceId`
 
 1. Excluir o Workspace e seus Domains e dados dependentes, conforme as regras de cascata do banco.
 
@@ -55,25 +55,14 @@ Disponibilizar operações para criar, listar, carregar, atualizar e excluir Wor
 
 ```text
 POST /workspaces
-{ name: string, colorPalette?: WorkspaceColorPalette }
+{ workspaceName: string, colorPalette?: WorkspaceColorPalette }
 
 PATCH /workspaces/:id
-{ name?: string, colorPalette?: WorkspaceColorPalette }
+{ workspaceName?: string, colorPalette?: WorkspaceColorPalette }
 
 PATCH /workspaces/:id/viewport
 { zoom?: number, cameraX?: number, cameraY?: number }
 
 PATCH /workspaces/:id/mode
 { isEditMode: boolean }
-```
-
-```typescript
-type WorkspaceColorPalette =
-  | 'red'
-  | 'green'
-  | 'blue'
-  | 'purple'
-  | 'yellow'
-  | 'white'
-  | 'black'
 ```

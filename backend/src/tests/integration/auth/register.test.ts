@@ -95,6 +95,15 @@ describe('POST /api/v1/auth/register (integração)', () => {
     const response = await request(app).post('/api/v1/auth/register').send(validPayload)
 
     expect(response.status).toBe(422)
-    expect(response.body.success).toBe(false)
+    expect(response.body).toMatchObject({
+      success: false,
+      code: 'VALIDATION_ERROR',
+      issues: expect.arrayContaining([
+        expect.objectContaining({
+          code: 'EMAIL_ALREADY_EXISTS',
+          field: 'email',
+        }),
+      ]),
+    })
   })
 })

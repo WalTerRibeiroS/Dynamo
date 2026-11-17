@@ -50,7 +50,7 @@ describe('auth.register.repository (integração)', () => {
     })
   })
 
-  it('mapeia username duplicado como DUPLICATE_FIELD do campo username', async () => {
+  it('lança erro de conflito de USERNAME_ALREADY_EXISTS no campo de username', async () => {
     await repository.createUser({
       id: uuidv7(),
       username: 'walter',
@@ -68,8 +68,11 @@ describe('auth.register.repository (integração)', () => {
         refreshTokenHash: 'refresh-hash-fake',
       }),
     ).rejects.toMatchObject({
-        code: 'DUPLICATE_FIELD',
-        publicDetails: { field: 'username' },
+        code: 'DATABASE_CONFLIT',
+        issues: [{
+          code: 'USERNAME_ALREADY_EXISTS',
+          field: 'username'
+        }]
       })
   })
 
@@ -92,7 +95,7 @@ describe('auth.register.repository (integração)', () => {
       expect(created).not.toHaveProperty('password_hash')
     })
 
-    it('rejeita com erro de unique_violation quando o email já existe', async () => {
+    it('rejeita com erro de conflito quando o email já existe', async () => {
       const emailDuplicado = 'walter@email.com'
       await repository.createUser({
         id: uuidv7(),
@@ -111,9 +114,12 @@ describe('auth.register.repository (integração)', () => {
           refreshTokenHash: 'refresh-hash-fake',
         }),
       ).rejects.toMatchObject({
-          code: 'DUPLICATE_FIELD',
-          publicDetails: { field: 'email' },
-        })
+          code: 'DATABASE_CONFLIT',
+          issues: [{
+            code: 'EMAIL_ALREADY_EXISTS',
+            field: 'email'
+          }]
+      })
     })
   })
 })

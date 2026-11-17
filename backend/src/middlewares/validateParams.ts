@@ -1,0 +1,18 @@
+import { z } from 'zod'
+import type { Request, Response, NextFunction } from 'express'
+import { ValidationError } from '../utils/errors.js'
+import { formatZodError } from '../utils/zodAdapter.js'
+
+export function validateParams<T extends z.ZodType<Request['params']>>(schema: T) {
+  return (req: Request, _res: Response, next: NextFunction) => {
+    const result = schema.safeParse(req.params)
+
+    if (!result.success) {
+      const issues = formatZodError(result.error.issues)
+      return next(new ValidationError({ issues }))
+    }
+
+    req.params = result.data
+    return next()
+  }
+}

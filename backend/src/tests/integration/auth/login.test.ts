@@ -73,7 +73,14 @@ describe('POST /api/v1/auth/login (integração)', () => {
 
     expect(response.status).toBe(422)
 
-    expect(response.body.success).toBe(false)
+    expect(response.body).toMatchObject({
+      success: false,
+      code: 'VALIDATION_ERROR',
+      issues: expect.arrayContaining([
+        expect.objectContaining({ code: 'INVALID_CREDENCIALS' }),
+      ]),
+    })
+    expect(response.body.issues[0]).not.toHaveProperty('field')
   })
 
   it('retorna erro quando a senha não bate com o email informado', async () => {
@@ -83,7 +90,14 @@ describe('POST /api/v1/auth/login (integração)', () => {
 
     expect(response.status).toBe(422)
 
-    expect(response.body.success).toBe(false)
+    expect(response.body).toMatchObject({
+      success: false,
+      code: 'VALIDATION_ERROR',
+      issues: expect.arrayContaining([
+        expect.objectContaining({ code: 'INVALID_CREDENCIALS' }),
+      ]),
+    })
+    expect(response.body.issues[0]).not.toHaveProperty('field')
   })
 
   it('email é inválidado por estar vazio', async () => {
@@ -93,7 +107,10 @@ describe('POST /api/v1/auth/login (integração)', () => {
 
     expect(response.status).toBe(422)
 
-    expect(response.body.success).toBe(false)
+    expect(response.body).toMatchObject({
+      success: false,
+      code: 'VALIDATION_ERROR',
+    })
 
     // Garante que o erro veio do Zod apontando para o field "email"
     // isso é safe pq o erro do service n aponta "field" para o erro
@@ -101,6 +118,7 @@ describe('POST /api/v1/auth/login (integração)', () => {
       expect.arrayContaining([
         expect.objectContaining({
           field: 'email',
+          code: 'CUSTOM_VALIDATION',
         }),
       ]),
     )

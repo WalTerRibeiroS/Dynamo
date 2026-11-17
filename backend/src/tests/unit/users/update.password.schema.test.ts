@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { updatePasswordSchema } from '../../../routes/v1/modules/users/schemas/users.update.password.schema.js'
+import { updatePasswordSchema } from '../../../routes/v1/modules/users/schemas/users.update.password.js'
 
 describe('updatePasswordSchema', () => {
   const validPayload = {
