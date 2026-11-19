@@ -9,10 +9,12 @@
     "typecheck": "tsc --noEmit",
     "start": "node dist/server.js",
     "lint": "eslint . --fix && prettier --write .",
-    "test:unit": "vitest run src/tests/unit",
-    "test:types": "vitest run --project type --typecheck.only",
-    "test:integration": "cross-env DB_NAME=Dynamo_test vitest run src/tests/integration --no-file-parallelism",
-    "test": "npm run test:unit && npm run test:integration"
+
+    "test:unit": "vitest run --project unit",
+    "test:type": "vitest run --project type",
+    "test:integration": "cross-env DB_NAME=Dynamo_test vitest run --project integration",
+
+    "test": "npm run test:unit && npm run test:type && npm run test:integration"
   },
   "keywords": [],
   "author": "",

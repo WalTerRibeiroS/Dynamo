@@ -6,12 +6,6 @@ import { defineConfig } from 'vitest/config'
 
 export default defineConfig({
   test: {
-
-    typecheck: {
-      enabled: true,
-      include: ['./src/tests/types/**/*.test-d.ts'],
-    },
-
     projects: [
       {
         test: {
@@ -33,7 +27,8 @@ export default defineConfig({
         test: {
           name: 'integration',
           include: ['./src/tests/integration/**/*.test.ts'],
-          testTimeout: 10000, // I/O real demora mais que unit
+          testTimeout: 10000,
+          fileParallelism: false,
           // setupFiles: ['./testes/integration/setup.ts'], // quando for conectar num banco de teste
         },
       },
