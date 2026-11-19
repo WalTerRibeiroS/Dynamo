@@ -1,6 +1,5 @@
 import { authedHandler } from '../../../../utils/authedHandler.js'
 import { sendSuccess } from '../../../../utils/sendSuccess.js'
-import { ValidationError } from '../../../../utils/errors.js'
 
 import type { WorkspaceParams } from './schemas/workspaces.params.js'
 import type { CreateWorkspaceInput } from './schemas/workspaces.create.js'

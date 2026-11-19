@@ -15,7 +15,7 @@ describe('createWorkspace (service)', () => {
     vi.mocked(repository.createWorkspace).mockResolvedValue(undefined)
 
     await expect(
-      createWorkspace('user-id', { name: 'Estudos', colorPalette: 'purple' }),
+      createWorkspace('user-id', { workspaceName: 'Estudos', colorPalette: 'purple' }),
     ).rejects.toThrow(NotFoundError)
   })
 })

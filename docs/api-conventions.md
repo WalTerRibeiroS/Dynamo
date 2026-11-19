@@ -61,7 +61,7 @@ export const updateSettingsSchema = z.object({
   theme: z.enum(['light', 'dark', 'system']),
 })
 
-export type UpdateSettingsInput = z.infer<typeof updateSettingsSchema>
+export type UserSettingsUpdate = z.infer<typeof updateSettingsSchema>
 ```
 
 Use the inferred type in the controller instead of maintaining a duplicate request type under `src/types/`.

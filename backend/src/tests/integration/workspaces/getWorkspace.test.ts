@@ -28,7 +28,7 @@ describe('GET /api/v1/workspaces/:workspaceId', () => {
     await createWorkspace({
       workspaceId: workspaceId,
       userId: userId,
-      name: "Teste",
+      workspaceName: "Teste",
       colorPalette: "black",
     })
   })

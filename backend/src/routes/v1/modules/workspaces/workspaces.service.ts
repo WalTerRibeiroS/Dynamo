@@ -2,19 +2,17 @@ import { uuidv7 } from 'uuidv7'
 
 import * as repository from './workspaces.repository.js'
 
-import type { CreateWorkspaceInput, WorkspaceColorPalette } from './schemas/workspaces.create.js'
-import type { Workspace, workspacesData, workspaceView, UpdatedWorkspaceData } from './workspaces.repository.js'
-
-import { NotFoundError, ValidationError } from '../../../../utils/errors.js'
-import type { UpdateWorkspaceInput } from './schemas/workspace.update.js'
+import { NotFoundError } from '../../../../utils/errors.js'
 import { getChangedFields } from '../../../../utils/getChangedFields.js'
 
-type UpdateInput = UpdatedWorkspaceData
+import type { UpdateWorkspaceInput } from './schemas/workspace.update.js'
+import type { NewWorkspaceRow, WorkspaceDetails, WorkspaceSettingsUpdate, WorkspaceSummary } from './workspaces.types.js'
+import type { CreateWorkspaceInput } from './schemas/workspaces.create.js'
 
 export const createWorkspace = async (
   userId: string,
   workspaceData: CreateWorkspaceInput,
-): Promise<Workspace> => {
+): Promise<NewWorkspaceRow> => {
 
   const createdWorkspaceData = await repository.createWorkspace({
     workspaceId: uuidv7(),
@@ -31,7 +29,7 @@ export const createWorkspace = async (
 
 export const getWorkspaces =  async (
   userId: string
-): Promise<workspacesData> => {
+): Promise<WorkspaceSummary[]> => {
 
   // tudo bem caso retorne um array vazio
   return repository.getWorkspacesData(userId)
@@ -40,7 +38,7 @@ export const getWorkspaces =  async (
 export const getWorkspace = async (
   workspaceId: string,
   userId: string
-): Promise<workspaceView> => {
+): Promise<WorkspaceDetails> => {
 
   const workspace = await repository.getWorkspaceData(workspaceId, userId)
 
@@ -55,7 +53,7 @@ export const updateWorkspace = async (
   workspaceId: string,
   userId: string,
   input: UpdateWorkspaceInput
-): Promise<UpdatedWorkspaceData> => {
+): Promise<WorkspaceSettingsUpdate> => {
 
   const currentWorkspace = await repository.getWorkspaceData(workspaceId, userId)
 
@@ -63,13 +61,7 @@ export const updateWorkspace = async (
     throw new NotFoundError()
   }
 
-  // antes de me crucificarem por usar 'as' aqui pra desligar o compilador
-  // o caso do valor da propriedade ser undefined já é tratado dentro da função
-  
-  const changes = getChangedFields(currentWorkspace, input as UpdateInput)
-
-  console.log(changes);
-  console.log(typeof changes);
+  const changes = getChangedFields(currentWorkspace, input)
 
   if (Object.keys(changes).length === 0) {
     return {

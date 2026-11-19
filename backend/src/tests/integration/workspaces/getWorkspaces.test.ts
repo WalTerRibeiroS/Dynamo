@@ -43,8 +43,8 @@ describe('GET /api/v1/workspaces', () => {
   })
 
   it('retorna os dados dos dois Workspaces do usuário', async () => {
-    await postWorkspace({ name: "espada"})
-    await postWorkspace({ name: "estudo"})
+    await postWorkspace({ workspaceName: "espada"})
+    await postWorkspace({ workspaceName: "estudo"})
 
     const response = await getWorkspaces()
     

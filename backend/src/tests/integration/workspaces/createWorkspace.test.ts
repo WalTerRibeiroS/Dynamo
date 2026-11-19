@@ -30,7 +30,7 @@ describe('POST /api/v1/workspaces', () => {
       .send(body)
 
   it('cria e retorna o Workspace completo com os valores iniciais', async () => {
-    const response = await postWorkspace({ name: '  Estudos  ' })
+    const response = await postWorkspace({ workspaceName: '  Estudos  ' })
 
     expect(response.status).toBe(201)
     expect(response.body.success).toBe(true)
@@ -48,7 +48,7 @@ describe('POST /api/v1/workspaces', () => {
 
   it('usa o workspaceId do backend e o usuário autenticado, ignorando workspaceId e userId do corpo', async () => {
     const response = await postWorkspace({
-      name: 'Estudos',
+      workspaceName: 'Estudos',
       workspaceId: '01a15562-1251-766d-b174-cc96982911fe',
       userId: '01a15562-1251-766d-b174-cc96982911fe',
     })
@@ -74,9 +74,9 @@ describe('POST /api/v1/workspaces', () => {
   })
 
   it('rejeita nome vazio, nome acima do limite e paleta inválida', async () => {
-    const emptyName = await postWorkspace({ name: '   ' })
-    const longName = await postWorkspace({ name: 'a'.repeat(51) })
-    const invalidPalette = await postWorkspace({ name: 'Estudos', colorPalette: 'orange' })
+    const emptyName = await postWorkspace({ workspaceName: '   ' })
+    const longName = await postWorkspace({ workspaceName: 'a'.repeat(51) })
+    const invalidPalette = await postWorkspace({ workspaceName: 'Estudos', colorPalette: 'orange' })
 
     expect(emptyName.status).toBe(422)
     expect(longName.status).toBe(422)
@@ -84,13 +84,13 @@ describe('POST /api/v1/workspaces', () => {
     expect(emptyName.body).toMatchObject({
       code: 'VALIDATION_ERROR',
       issues: expect.arrayContaining([
-        expect.objectContaining({ code: 'MIN_LENGTH', field: 'name' }),
+        expect.objectContaining({ code: 'MIN_LENGTH', field: 'workspaceName' }),
       ]),
     })
     expect(longName.body).toMatchObject({
       code: 'VALIDATION_ERROR',
       issues: expect.arrayContaining([
-        expect.objectContaining({ code: 'MAX_LENGTH', field: 'name' }),
+        expect.objectContaining({ code: 'MAX_LENGTH', field: 'workspaceName' }),
       ]),
     })
     expect(invalidPalette.body).toMatchObject({
@@ -102,8 +102,8 @@ describe('POST /api/v1/workspaces', () => {
   })
 
   it('rejeita nome repetido sem diferenciar maiúsculas e minúsculas', async () => {
-    const first = await postWorkspace({ name: 'Estudos de TypeScript' })
-    const duplicate = await postWorkspace({ name: '  ESTUDOS DE TYPESCRIPT  ' })
+    const first = await postWorkspace({ workspaceName: 'Estudos de TypeScript' })
+    const duplicate = await postWorkspace({ workspaceName: '  ESTUDOS DE TYPESCRIPT  ' })
 
     expect(first.status).toBe(201)
     expect(duplicate.status).toBe(409)
@@ -131,8 +131,8 @@ describe('POST /api/v1/workspaces', () => {
       refreshTokenHash: otherRefreshTokenHash,
     })
 
-    const first = await postWorkspace({ name: 'Estudos' })
-    const second = await postWorkspace({ name: 'Estudos' }, otherAccessToken)
+    const first = await postWorkspace({ workspaceName: 'Estudos' })
+    const second = await postWorkspace({ workspaceName: 'Estudos' }, otherAccessToken)
 
     expect(first.status).toBe(201)
     expect(second.status).toBe(201)
@@ -141,11 +141,11 @@ describe('POST /api/v1/workspaces', () => {
 
   it('retorna conflito ao tentar criar o sexto Workspace', async () => {
     for (let index = 1; index <= 5; index += 1) {
-      const response = await postWorkspace({ name: `Workspace ${index}` })
+      const response = await postWorkspace({ workspaceName: `Workspace ${index}` })
       expect(response.status).toBe(201)
     }
 
-    const sixthWorkspace = await postWorkspace({ name: 'Workspace 6' })
+    const sixthWorkspace = await postWorkspace({ workspaceName: 'Workspace 6' })
 
     expect(sixthWorkspace.status).toBe(409)
     expect(sixthWorkspace.body).toMatchObject({
@@ -159,13 +159,13 @@ describe('POST /api/v1/workspaces', () => {
 
   it('o trigger impede criações simultâneas de ultrapassarem o limite', async () => {
     for (let index = 1; index <= 4; index += 1) {
-      const response = await postWorkspace({ name: `Workspace ${index}` })
+      const response = await postWorkspace({ workspaceName: `Workspace ${index}` })
       expect(response.status).toBe(201)
     }
 
     const responses = await Promise.all([
-      postWorkspace({ name: 'Workspace 5A' }),
-      postWorkspace({ name: 'Workspace 5B' }),
+      postWorkspace({ workspaceName: 'Workspace 5A' }),
+      postWorkspace({ workspaceName: 'Workspace 5B' }),
     ])
 
     expect(responses.map(({ status }) => status).sort()).toEqual([201, 409])
@@ -181,8 +181,8 @@ describe('POST /api/v1/workspaces', () => {
 
   it('o índice único rejeita criações simultâneas com nomes equivalentes', async () => {
     const responses = await Promise.all([
-      postWorkspace({ name: 'Estudos' }),
-      postWorkspace({ name: 'ESTUDOS' }),
+      postWorkspace({ workspaceName: 'Estudos' }),
+      postWorkspace({ workspaceName: 'ESTUDOS' }),
     ])
 
     expect(responses.map(({ status }) => status).sort()).toEqual([201, 409])

@@ -1,8 +1,7 @@
 import pool from '../../../../config/db.js'
 import { isDatabaseError } from '../../../../utils/isDatabaseError.js'
 import { DatabaseConflitError } from '../../../../utils/errors.js'
-
-import type { CreatedUser, CreateUserInput, UserPasswordId } from '../../../../types/user.js'
+import type { NewUserRow, CreateUserInput, UserPasswordDetails } from '../../../../types/users.auth.js'
 
 function authCreateError(error: unknown): never {
   if (isDatabaseError(error)) {
@@ -71,9 +70,9 @@ export const createUser = async ({
   email,
   passwordHash,
   refreshTokenHash,
-}: CreateUserInput): Promise<CreatedUser> => {
+}: CreateUserInput): Promise<NewUserRow> => {
   try {
-    const { rows } = await pool.query<CreatedUser>(
+    const { rows } = await pool.query<NewUserRow>(
       `
       INSERT INTO users
         (
@@ -89,19 +88,19 @@ export const createUser = async ({
       [id, username, email, passwordHash, refreshTokenHash],
     )
 
-    const createdUser = rows[0]
-    if (!createdUser) {
+    const NewUserRow = rows[0]
+    if (!NewUserRow) {
       throw new Error('A criação do usuário não retornou os dados esperados')
     }
 
-    return createdUser
+    return NewUserRow
   } catch (error) {
     authCreateError(error)
   }
 }
 
-export const getUserByEmail = async (email: string): Promise<UserPasswordId | undefined> => {
-  const { rows } = await pool.query<UserPasswordId>(
+export const getUserByEmail = async (email: string): Promise<UserPasswordDetails | undefined> => {
+  const { rows } = await pool.query<UserPasswordDetails>(
     `
     SELECT 
       id, 

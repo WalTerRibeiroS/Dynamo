@@ -27,7 +27,7 @@ describe('PATCH /api/v1/workspaces/:workspaceId', () => {
     await createWorkspace({
       workspaceId: workspaceId,
       userId: userId,
-      name: "Teste",
+      workspaceName: "Teste",
       colorPalette: "black",
     })
   })
@@ -150,7 +150,7 @@ describe('PATCH /api/v1/workspaces/:workspaceId', () => {
     await createWorkspace({
       workspaceId: '01a1e4bf-820a-7509-bab9-f526eb4c0639',
       userId: userId,
-      name: "Nome muito legal",
+      workspaceName: "Nome muito legal",
       colorPalette: "blue",
     })
 

@@ -1,16 +1,9 @@
-import baseLogger from '../../../../utils/logger.js'
-
-import { AppError, ConcurrencyError, NotFoundError, ValidationError } from '../../../../utils/errors.js'
-
+import { ConcurrencyError, NotFoundError, ValidationError } from '../../../../utils/errors.js'
 import bcrypt from 'bcrypt'
-
+import type { UserDetails, UserTheme } from '../../../../types/users.auth.js'
 import * as repository from './users.repository.js'
-import type { UserData } from '../../../../types/user.js'
-import type { UserTheme } from '../../../../types/user.js'
 
-const logger = baseLogger.child({ layer: 'service' })
-
-export const getUserData = async (userId: string): Promise<UserData> => {
+export const getUserData = async (userId: string): Promise<UserDetails> => {
 
   const userData = await repository.getUserDataById(userId)
 

@@ -1,46 +1,11 @@
 import pool from '../../../../config/db.js'
+
 import { buildSetClause } from '../../../../utils/buildSetClause.js'
 import { DatabaseConflitError, NotFoundError } from '../../../../utils/errors.js'
 import { isDatabaseError } from '../../../../utils/isDatabaseError.js'
+
 import type { UpdateWorkspaceInput } from './schemas/workspace.update.js'
-
-import type {
-  CreateWorkspaceInput,
-  WorkspaceColorPalette,
-} from './schemas/workspaces.create.js'
-
-export type Workspace = {
-  workspaceId: string
-  userId: string
-  workspaceName: string
-  zoom: number
-  cameraX: number
-  cameraY: number
-  colorPalette: WorkspaceColorPalette
-  isEditMode: boolean
-}
-
-export type CreateWorkspaceRecord = CreateWorkspaceInput & {
-  workspaceId: string
-  userId: string
-}
-
-type workspaceData = Pick<
-  Workspace,
-  'workspaceId' | 'userId' | 'workspaceName' | 'colorPalette'
->
-
-export type workspaceView = Pick<
-  Workspace,
-  'workspaceName' | 'colorPalette' | 'zoom' | 'cameraX' | 'cameraY' | 'isEditMode'
->
-
-export type workspacesData = workspaceData[]
-
-export type UpdatedWorkspaceData = {
-  colorPalette: WorkspaceColorPalette,
-  workspaceName: string
-}
+import type { NewWorkspaceRow, WorkspaceDetails, WorkspaceSettingsUpdate, WorkspaceSummary } from './workspaces.types.js'
 
 function workspaceCreateError(error: unknown): never {
   if (isDatabaseError(error)) {
@@ -82,11 +47,11 @@ function workspaceCreateError(error: unknown): never {
 export const createWorkspace = async ({
   workspaceId,
   userId,
-  name,
+  workspaceName,
   colorPalette,
-}: CreateWorkspaceRecord): Promise<Workspace | undefined> => {
+}: WorkspaceSummary): Promise<NewWorkspaceRow | undefined> => {
   try {
-    const { rows } = await pool.query<Workspace>(
+    const { rows } = await pool.query<NewWorkspaceRow>(
       `
       INSERT INTO workspaces (
         workspace_id,
@@ -105,7 +70,7 @@ export const createWorkspace = async ({
         color_palette AS "colorPalette",
         is_edit_mode AS "isEditMode"
       `,
-      [workspaceId, userId, name, colorPalette],
+      [workspaceId, userId, workspaceName, colorPalette],
     )
 
     return rows[0]
@@ -118,8 +83,8 @@ export const createWorkspace = async ({
 
 export const getWorkspacesData = async (
   userId: string
-): Promise<workspacesData> => {
-  const { rows } = await pool.query<workspaceData>(
+): Promise<WorkspaceSummary[]> => {
+  const { rows } = await pool.query<WorkspaceSummary>(
     `
     SELECT
       workspace_id AS "workspaceId",
@@ -141,8 +106,8 @@ export const getWorkspacesData = async (
 export const getWorkspaceData = async (
   workspaceId: string,
   userId: string
-): Promise<workspaceView | undefined> => {
-  const { rows } = await pool.query<workspaceView>(
+): Promise<WorkspaceDetails | undefined> => {
+  const { rows } = await pool.query<WorkspaceDetails>(
     `
     SELECT
       workspace_name AS "workspaceName",
@@ -152,7 +117,10 @@ export const getWorkspaceData = async (
       camera_y AS "cameraY",
       is_edit_mode AS "isEditMode"
     FROM workspaces
-    WHERE user_id = $1 AND workspace_id = $2 
+    WHERE 
+      user_id = $1 
+    AND 
+      workspace_id = $2 
     `,
     [userId, workspaceId]
   )
@@ -169,12 +137,12 @@ export const updateWorkspace = async (
   workspaceId: string,
   userId: string,
   changes: UpdateWorkspaceInput
-): Promise<UpdatedWorkspaceData | undefined> => {
+): Promise<WorkspaceSettingsUpdate | undefined> => {
 
   const { assignments, values } = buildSetClause(changes, workspaceColumns, 3)
 
   try {
-    const { rows } = await pool.query<UpdatedWorkspaceData>(
+    const { rows } = await pool.query<WorkspaceSettingsUpdate>(
       `
       UPDATE workspaces
       SET

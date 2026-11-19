@@ -1,9 +1,10 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { uuidv7 } from 'uuidv7'
 import { createUser } from '../../../routes/v1/modules/auth/auth.repository.js'
-import { createWorkspace, updateWorkspace, type CreateWorkspaceRecord } from '../../../routes/v1/modules/workspaces/workspaces.repository.js'
+import { createWorkspace, updateWorkspace } from '../../../routes/v1/modules/workspaces/workspaces.repository.js'
 import { resetDatabase } from '../../resetDatabase.js'
 import pool from '../../../config/db.js'
+import type { WorkspaceSummary } from '../../../routes/v1/modules/workspaces/workspaces.types.js'
 
 describe('updateWorkspace', () => {
   beforeEach(async () => {
@@ -21,8 +22,8 @@ describe('updateWorkspace', () => {
     refreshTokenHash: 'refresh-hash-inicial',
   }
 
-  const workspaceFake: CreateWorkspaceRecord = {
-    name: 'string',
+  const workspaceFake: WorkspaceSummary = {
+    workspaceName: 'string',
     colorPalette: "black",
     workspaceId: workspaceId,
     userId: idFake,

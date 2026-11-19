@@ -1,9 +1,7 @@
 import pool from '../../../../config/db.js'
 import { isDatabaseError } from '../../../../utils/isDatabaseError.js'
-
-import type { UserData } from '../../../../types/user.js'
 import { DatabaseConflitError } from '../../../../utils/errors.js'
-import type { updateSettingsInput, UserTheme } from '../../../../types/user.js'
+import type { UserSettingsUpdate, UserDetails, UserTheme } from '../../../../types/users.auth.js'
 
 function usersCreateError(error: unknown): never {
   if (isDatabaseError(error)) {
@@ -38,8 +36,8 @@ function usersCreateError(error: unknown): never {
   throw error
 }
 
-export const getUserDataById = async (userId: string): Promise<UserData | undefined> => {
-  const { rows } = await pool.query<UserData>(
+export const getUserDataById = async (userId: string): Promise<UserDetails | undefined> => {
+  const { rows } = await pool.query<UserDetails>(
     `
     SELECT
       id, 
@@ -87,7 +85,7 @@ export const updateSettings = async (
   newTheme: UserTheme,
 ): Promise<UserTheme | undefined> => {
   try {
-    const { rows } = await pool.query<updateSettingsInput>(
+    const { rows } = await pool.query<UserSettingsUpdate>(
       `
       UPDATE users
       SET 

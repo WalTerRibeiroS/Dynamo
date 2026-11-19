@@ -20,7 +20,7 @@ describe('createWorkspace (repository)', () => {
     const result = await createWorkspace({
       workspaceId: 'workspace-id',
       userId: 'user-id',
-      name: 'Estudos',
+      workspaceName: 'Estudos',
       colorPalette: 'purple',
     })
 

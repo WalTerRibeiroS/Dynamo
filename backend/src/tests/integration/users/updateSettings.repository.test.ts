@@ -4,7 +4,7 @@ import { createUser } from '../../../routes/v1/modules/auth/auth.repository.js'
 import { resetDatabase } from '../../resetDatabase.js'
 import { uuidv7 } from 'uuidv7'
 import pool from '../../../config/db.js'
-import type { UserTheme } from '../../../types/user.js'
+import type { UserTheme } from '../../../types/users.auth.js'
 
 describe('updateSettings', () => {
   beforeEach(async () => {

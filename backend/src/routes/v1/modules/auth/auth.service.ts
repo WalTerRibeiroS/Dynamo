@@ -10,14 +10,14 @@ import { verifyRefreshToken } from './auth.tokens.js'
 import type { RegisterUserInput } from './schemas/auth.register.js'
 import type { LoginUserInput } from './schemas/auth.login.js'
 import type { Issue } from '../../../../types/issue.js'
-import type { CreatedUser, CreateUserInput } from '../../../../types/user.js'
 
 import * as repository from '../auth/auth.repository.js'
+import type { NewUserRow, CreateUserInput } from '../../../../types/users.auth.js'
 
 //const logger = baseLogger.child({ layer: "service"})
 
 type RegisterUserResult = {
-  user: CreatedUser & { accessToken: string }
+  user: NewUserRow & { accessToken: string }
   refreshToken: string
 }
 
